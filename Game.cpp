@@ -27,8 +27,7 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 std::cout << "renderer creation success\n";
                 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
-                
-
+     
                 //// Load texture using TextureManager
                 //if (!TextureManager::Instance()->loadTexture("images/pic1.bmp", "background", renderer)) {
                 //    std::cerr << "Failed to load texture!" << std::endl;
@@ -86,7 +85,7 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 int ballY = paddleY - ballRadius; // On top of the paddle
 
                 paddle = Paddle(paddleX, paddleY, paddleWidth, paddleHeight);
-                ball = Ball(ballX, ballY, ballRadius, 1, 1, windowWidth, windowHeight); // Example velocities 5 and 5
+                ball = Ball(ballX, ballY, ballRadius, 6, 6, windowWidth, windowHeight);
 
             }
             else {
@@ -185,7 +184,9 @@ void Game::RenderStartScreen() {
 
     // Draw an image
     //TextureManager::Instance()->drawTexture("background", 0, 0, windowWidth, windowHeight, renderer);
-
+    
+ 
+    // DRAW FONT
     SDL_Color textColor = { 255, 255, 255 }; // White color
     int textWidth, textHeight;
     fontManager->getTextSize("START", textColor, &textWidth, &textHeight);
@@ -252,6 +253,27 @@ void Game::Clean() {
 }
 
 
+void Game::RunGameLoop() {
+    Uint32 frameStart;
+    int frameTime;
+    const int desiredFrameRate = 50;
+
+    while (IsRunning()) {
+        frameStart = SDL_GetTicks();
+
+        HandleEvents();
+        Update();
+        Render();
+
+        frameTime = SDL_GetTicks() - frameStart;
+
+        if (frameTime < 1000 / desiredFrameRate) {
+            SDL_Delay(1000 / desiredFrameRate - frameTime);
+        }
+    }
+}
+
+
 int Game::getWindowHeight() const {
 
     return this->windowHeight;
@@ -261,3 +283,4 @@ int Game::getWindowWidth() const {
 
     return this->windowWidth;
 }
+

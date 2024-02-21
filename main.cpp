@@ -12,11 +12,7 @@ int main(int argc, char* argv[]) {
         WINDOW_WIDTH, WINDOW_HEIGHT,
         SDL_WINDOW_RESIZABLE);
 
-    while (game->IsRunning()) {
-        game->HandleEvents();
-        game->Update();
-        game->Render();
-    }
+    game->RunGameLoop();
 
     game->Clean();
     delete game; // Clean up allocated memory

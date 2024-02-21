@@ -20,6 +20,7 @@ public:
     bool IsRunning();
     void Clean();
 
+    void RunGameLoop();
     void RenderStartScreen();
     bool IsMouseOverStartButton(int, int);
 
