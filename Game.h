@@ -1,11 +1,13 @@
 #include "SDL.h"
+#include "SDL_image.h"
+#include "SDL_ttf.h"
 #include "Paddle.h"
 #include "Ball.h"
 #include "Bricks.h"
 #include "Scoreboard.h"
 #include "FileHandler.h"
+#include "FontManager.h"
 #include <vector>
-
 
 class Game {
 public:
@@ -29,6 +31,7 @@ private:
 
     SDL_Window* window;
     SDL_Renderer* renderer;
+   
     bool running;
     int currentFrame;
     Paddle paddle;
@@ -36,6 +39,8 @@ private:
     std::vector<Brick> bricks;
     Scoreboard scoreboard;
     FileHandler fileHandler;
+    FontManager* fontManager;
+    int fontSize;
     int windowWidth;
     int windowHeight;
 

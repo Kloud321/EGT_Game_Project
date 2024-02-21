@@ -1,10 +1,17 @@
 #include "Game.h"
 
+
 #include <iostream>
 
-Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(0), paddle(0, 0, 0, 0), ball(0, 0, 0, 0, 0, 0, 0), scoreboard(0), gameStarted(false) {}
+Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(0), paddle(0, 0, 0, 0), ball(0, 0, 0, 0, 0, 0, 0), scoreboard(0), gameStarted(false), fontSize(85) {
 
-Game::~Game() {}
+    fontManager = new FontManager();
+}
+
+Game::~Game() {
+
+    delete fontManager;
+}
 
 bool Game::Init(const char* title, int xpos, int ypos, int width, int height, int flags) {
     if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
@@ -20,12 +27,39 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 std::cout << "renderer creation success\n";
                 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
+                
+
+                //// Load texture using TextureManager
+                //if (!TextureManager::Instance()->loadTexture("images/pic1.bmp", "background", renderer)) {
+                //    std::cerr << "Failed to load texture!" << std::endl;
+                //    return false;
+                //}
+
+                // Check if TTF is init
+                if (TTF_Init() == -1) {
+                    std::cerr << "TTF_Init() failed: " << TTF_GetError() << std::endl;
+                    return false;
+                }
+                else {
+                    cout << "TTF_Init succeded!" << endl;
+                }
+
+                // Load font
+                if (!fontManager->loadFont("D:\\Private folder\\University and styduing\\EGT\\FreeORG C++ Course\\VS Projects EGT\\EGT_Game_Project\\EGT_Game_Project\\Fonts\\ARCADE_I.ttf", fontSize)) {
+                    return false;
+                }
+                else {
+                    cout << "FONT Loaded succecfully!" << endl;
+                }
+
+                // Windows dimensions
                 windowWidth = width;
                 windowHeight = height;
 
+                // ----------------------------------------------//
 
                 //START BUTTON
-               
+
                 int BUTTON_WIDTH = 250;
                 int BUTTON_HEIGHT = 125;
 
@@ -34,7 +68,10 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 startButtonRect.w = BUTTON_WIDTH;
                 startButtonRect.h = BUTTON_HEIGHT;
 
-                // paddle size
+                // ------------------------------------------------//
+
+                // PADDLE
+
                 int paddleWidth = 150;
                 int paddleHeight = 30;
             
@@ -78,6 +115,32 @@ void Game::HandleEvents() {
         case SDL_QUIT:
             running = false;
             break;
+
+        
+        case SDL_MOUSEBUTTONDOWN:
+            if (!gameStarted && event.button.button == SDL_BUTTON_LEFT) {
+                int mouseX, mouseY;
+                SDL_GetMouseState(&mouseX, &mouseY);
+                if (IsMouseOverStartButton(mouseX, mouseY)) {
+                    // Start the game
+                    gameStarted = true;
+                }
+            }
+            else {
+
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    // Start the ball moving by giving it some initial velocity
+                    cout << "Move Ball" << endl;
+                    cout << ball.getVelocityX() << "  " << ball.getVelocityY() << endl;
+                    cout << ball.getX() << "  " << ball.getY() << endl;
+                    ball.setVelocityX(2); // Example initial velocity
+                    ball.setVelocityY(2); // Example initial velocity
+                }
+          
+            }
+            break;
+
+
         case SDL_WINDOWEVENT:
             if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
 
@@ -109,17 +172,8 @@ void Game::HandleEvents() {
             }
             break;
 
-        case SDL_MOUSEBUTTONDOWN:
             // Check if the left mouse button is clicked
-            if (event.button.button == SDL_BUTTON_LEFT) {
-                // Start the ball moving by giving it some initial velocity
-                cout << "Move Ball" << endl;
-                cout << ball.getVelocityX() << "  " << ball.getVelocityY() << endl;
-                cout << ball.getX() << "  " << ball.getY() << endl;
-                ball.setVelocityX(2); // Example initial velocity
-               ball.setVelocityY(2); // Example initial velocity
-            }
-            break;
+           
         }
     }
 }
@@ -129,11 +183,23 @@ void Game::RenderStartScreen() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    // Render title and instructions (you can use SDL functions for rendering text)
+    // Draw an image
+    //TextureManager::Instance()->drawTexture("background", 0, 0, windowWidth, windowHeight, renderer);
 
-    // Render start button
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderFillRect(renderer, &startButtonRect);
+    SDL_Color textColor = { 255, 255, 255 }; // White color
+    int textWidth, textHeight;
+    fontManager->getTextSize("START", textColor, &textWidth, &textHeight);
+    int buttonWidth = textWidth + 10; // Add padding
+    int buttonHeight = textHeight + 10; // Add padding
+    startButtonRect.x = (getWindowWidth() - buttonWidth) / 2;
+    startButtonRect.y = (getWindowHeight() - buttonHeight) / 2;
+    startButtonRect.w = buttonWidth;
+    startButtonRect.h = buttonHeight;
+    fontManager->renderText("START", textColor, renderer, startButtonRect.x + 5, startButtonRect.y + 5);
+
+    // Draw border around the start button
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color
+    SDL_RenderDrawRect(renderer, &startButtonRect);
 
     // Present renderer
     SDL_RenderPresent(renderer);
@@ -151,17 +217,24 @@ void Game::Update() {
 }
 
 void Game::Render() {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
+    if (!gameStarted) {
+        RenderStartScreen();
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
 
-    paddle.Render(renderer);
-    ball.Render(renderer);
- /*   for (auto& brick : bricks) {
-        brick.Render(renderer);
-    }*/
-    //scoreboard.Render(renderer);
+        paddle.Render(renderer);
+        ball.Render(renderer);
+        /*   for (auto& brick : bricks) {
+               brick.Render(renderer);
+           }*/
+           //scoreboard.Render(renderer);
 
-    SDL_RenderPresent(renderer);
+        SDL_RenderPresent(renderer);
+    }
+    
 }
 
 bool Game::IsRunning() {
@@ -170,6 +243,8 @@ bool Game::IsRunning() {
 
 void Game::Clean() {
     std::cout << "cleaning game\n";
+
+    //TextureManager::Instance()->clean();
 
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
