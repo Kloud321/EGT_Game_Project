@@ -1,66 +1,56 @@
 #include "Ball.h"
-//#include "Game.h"
+#include "Game.h"
 
 Ball::Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWidth, int windowHeight)
-    : x(x), y(y), radius(radius), velocityX(velocityX), velocityY(velocityY), windowWidth(windowWidth), windowHeight(windowHeight) {}
+    : x(x), y(y), radius(radius), velocityX(velocityX), velocityY(velocityY), windowWidth(windowWidth),
+    windowHeight(windowHeight), initialX(x), initialY(y), isBallMoving(false){}
 
 
-//void Ball::Update(Paddle& paddle, Game& game) {
-//    // Update ball position
-//    x += velocityX;
-//    y += velocityY;
-//
-//    int initialX, initialY;
-//   
-//
-//    // Check for collisions with window boundaries and paddle
-//    if (x - radius < 0 || x + radius > windowWidth) {
-//        velocityX = -velocityX; // Reverse horizontal velocity
-//    }
-//    if (y - radius < 0) {
-//        velocityY = -velocityY; // Reverse vertical velocity for top boundary
-//    }
-//    else if (y + radius > windowHeight) {
-//        // Check for collision with paddle
-//        if (x > paddle.getX() && x < paddle.getX() + paddle.getWidth() && y + radius > paddle.getY()) {
-//            velocityY = -velocityY; // Reverse vertical velocity for paddle
-//        }
-//        else {
-//            // Ball went below paddle, decrement lives and check if lives > 0
-//            game.setLives(game.getLives() - 1);
-//            if (game.getLives() > 0) {
-//                // Reset ball position
-//                x = initialX;
-//                y = initialY;
-//                velocityX = 5;
-//                velocityY = 5;
-//            }
-//            else {
-//                //
-//
-//
-//            }
-//        }
-//    }
-//}
+//const referenc
 
+void Ball::Update(Paddle& paddle, Game& game) {
+    // Check if the game has started
+    if (isBallMoving) {
+        // Update ball position
+        x += velocityX;
+        y += velocityY;
 
+        // Check for collisions with window boundaries and paddle
+        if (x - radius < 0 || x + radius > windowWidth) {
+            velocityX = -velocityX; // Reverse horizontal velocity
+        }
+        if (y - radius < 0) {
+            velocityY = -velocityY; // Reverse vertical velocity for top boundary
+        }
+        // Check for collision with paddle
+        else if (y + radius > windowHeight) {
+            if (x > paddle.getX() && x < paddle.getX() + paddle.getWidth() && y + radius > paddle.getY()) {
+                velocityY = -velocityY; // Reverse vertical velocity for paddle
+            }
+            else {
+                setBallMoving(false);
 
-void Ball::Update() {
-
-    //ball position
-    x += velocityX;
-    y += velocityY;
-
-
- if (x - radius < 0 || x + radius > windowWidth) {
-     velocityX = -velocityX; // Reverse horizontal velocity
- }
- if (y - radius < 0 || y + radius > windowHeight) {
-    velocityY = -velocityY; // Reverse vertical velocity
+                // Ball went below paddle, decrement lives and check if lives > 0
+                game.setLives(game.getLives() - 1);
+                cout << game.getLives() << endl;
+                if (game.getLives() > 0) {
+                    // Reset ball position
+                    x = initialX;
+                    y = initialY;
+                    velocityX = 6;
+                    velocityY = 6;
+                }
+                else {
+                    
+                    cout << "Game is over" << endl;
+                  
+                }
+            }
+        }
     }
-
 }
+
+
 
 void Ball::Render(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -83,14 +73,20 @@ void Ball::ChangeDirectionY() {
 }
 
 
+//Ball::setInitialPosition(int initialX, int initialY) {
+//    this->initialX = initialX;
+//    this->initialY = initialY;
+//}
+
+
 void Ball::setX(int x) {
 
-    x = this->x;
+    this->x = x;
 }
 
 void Ball::setY(int y) {
 
-    y = this->y;
+    this->y = y;
 }
 
 int Ball::getX() {
@@ -123,4 +119,12 @@ int Ball::getVelocityY() {
 
 void Ball::setVelocityY(int velocityY) {
     this->velocityY = velocityY;
+}
+
+void Ball::setBallMoving(bool state) {
+    this->isBallMoving = state;
+}
+
+bool Ball::getBallState() const {
+    return this->isBallMoving;
 }

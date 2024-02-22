@@ -8,17 +8,18 @@ using std::cout;
 using std::endl;
 
 //forward declaration
-//class Game;
+class Game;
 
 class Ball {
 public:
     Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWidth, int windowHeight);
 
-    //void Update(Paddle& paddle, Game& game);
-    void Update();
-
+    void Update(Paddle& paddle, Game& game);
+ 
     void Render(SDL_Renderer* renderer);
+
     SDL_Rect GetRect();
+
     void ChangeDirectionX();
     void ChangeDirectionY();
 
@@ -43,6 +44,12 @@ public:
     void setVelocityY(int);
     int getVelocityY();
 
+
+    void setBallMoving(bool);
+    bool getBallState() const;
+
+    //void setInitialPosition(int, int);
+
 private:
     int x;
     int y;
@@ -50,6 +57,10 @@ private:
     int velocityX;
     int velocityY;
     int windowWidth;
-    int windowHeight;
+    int windowHeight; 
+    int initialX;
+    int initialY;
+    bool isBallMoving;
+
 
 };
