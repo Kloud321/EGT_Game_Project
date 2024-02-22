@@ -1,14 +1,22 @@
+#pragma once
 #include <SDL.h>
 #include <iostream>
 #include <string>
+#include "Paddle.h"
 
 using std::cout;
 using std::endl;
 
+//forward declaration
+//class Game;
+
 class Ball {
 public:
     Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWidth, int windowHeight);
+
+    //void Update(Paddle& paddle, Game& game);
     void Update();
+
     void Render(SDL_Renderer* renderer);
     SDL_Rect GetRect();
     void ChangeDirectionX();

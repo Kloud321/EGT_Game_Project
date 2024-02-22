@@ -6,7 +6,6 @@
 using std::cout;
 using std::endl;
 
-
 class Paddle {
 public:
 

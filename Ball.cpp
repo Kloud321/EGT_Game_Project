@@ -1,7 +1,50 @@
 #include "Ball.h"
+//#include "Game.h"
 
 Ball::Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWidth, int windowHeight)
     : x(x), y(y), radius(radius), velocityX(velocityX), velocityY(velocityY), windowWidth(windowWidth), windowHeight(windowHeight) {}
+
+
+//void Ball::Update(Paddle& paddle, Game& game) {
+//    // Update ball position
+//    x += velocityX;
+//    y += velocityY;
+//
+//    int initialX, initialY;
+//   
+//
+//    // Check for collisions with window boundaries and paddle
+//    if (x - radius < 0 || x + radius > windowWidth) {
+//        velocityX = -velocityX; // Reverse horizontal velocity
+//    }
+//    if (y - radius < 0) {
+//        velocityY = -velocityY; // Reverse vertical velocity for top boundary
+//    }
+//    else if (y + radius > windowHeight) {
+//        // Check for collision with paddle
+//        if (x > paddle.getX() && x < paddle.getX() + paddle.getWidth() && y + radius > paddle.getY()) {
+//            velocityY = -velocityY; // Reverse vertical velocity for paddle
+//        }
+//        else {
+//            // Ball went below paddle, decrement lives and check if lives > 0
+//            game.setLives(game.getLives() - 1);
+//            if (game.getLives() > 0) {
+//                // Reset ball position
+//                x = initialX;
+//                y = initialY;
+//                velocityX = 5;
+//                velocityY = 5;
+//            }
+//            else {
+//                //
+//
+//
+//            }
+//        }
+//    }
+//}
+
+
 
 void Ball::Update() {
 
@@ -10,7 +53,6 @@ void Ball::Update() {
     y += velocityY;
 
 
-    
  if (x - radius < 0 || x + radius > windowWidth) {
      velocityX = -velocityX; // Reverse horizontal velocity
  }

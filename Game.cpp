@@ -1,9 +1,9 @@
 #include "Game.h"
-
+#include "TextureManager.h"
 
 #include <iostream>
 
-Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(0), paddle(0, 0, 0, 0), ball(0, 0, 0, 0, 0, 0, 0), scoreboard(0), gameStarted(false), fontSize(85) {
+Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(0), paddle(0, 0, 0, 0), ball(0, 0, 0, 0, 0, 0, 0), scoreboard(0), gameStarted(false), fontSize(85), playerLives(2) {
 
     fontManager = new FontManager();
 }
@@ -27,12 +27,14 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 std::cout << "renderer creation success\n";
                 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
+                IMG_Init(IMG_INIT_PNG);
+                
      
-                //// Load texture using TextureManager
-                //if (!TextureManager::Instance()->loadTexture("images/pic1.bmp", "background", renderer)) {
-                //    std::cerr << "Failed to load texture!" << std::endl;
-                //    return false;
-                //}
+                // Load texture using TextureManager
+                if (!TextureManager::Instance()->loadTexture("images/pic1.bmp", "background", renderer)) {
+                    std::cerr << "Failed to load texture!" << std::endl;
+                    return false;
+                }
 
                 // Check if TTF is init
                 if (TTF_Init() == -1) {
@@ -170,8 +172,6 @@ void Game::HandleEvents() {
                 ball.setY(ballY);
             }
             break;
-
-            // Check if the left mouse button is clicked
            
         }
     }
@@ -183,7 +183,7 @@ void Game::RenderStartScreen() {
     SDL_RenderClear(renderer);
 
     // Draw an image
-    //TextureManager::Instance()->drawTexture("background", 0, 0, windowWidth, windowHeight, renderer);
+    TextureManager::Instance()->drawTexture("background", 0, 0, windowWidth, windowHeight, renderer);
     
  
     // DRAW FONT
@@ -213,7 +213,7 @@ bool Game::IsMouseOverStartButton(int mouseX, int mouseY) {
 }
 
 void Game::Update() {
-    currentFrame = int(((SDL_GetTicks() / 150) % 5)); // % 5 for 5 frames
+
     ball.Update();
 }
 
@@ -252,7 +252,6 @@ void Game::Clean() {
     SDL_Quit();
 }
 
-
 void Game::RunGameLoop() {
     Uint32 frameStart;
     int frameTime;
@@ -273,7 +272,6 @@ void Game::RunGameLoop() {
     }
 }
 
-
 int Game::getWindowHeight() const {
 
     return this->windowHeight;
@@ -284,3 +282,13 @@ int Game::getWindowWidth() const {
     return this->windowWidth;
 }
 
+
+int Game::getLives() const {
+
+    return this->playerLives;
+}
+
+void Game::setLives(int lives) {
+
+    this->playerLives = lives;
+}

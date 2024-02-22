@@ -1,3 +1,4 @@
+#pragma once
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
@@ -26,6 +27,9 @@ public:
 
     int getWindowWidth() const;
     int getWindowHeight() const;
+    int getLives() const;
+    void setLives(int);
+
 private:
     SDL_Rect startButtonRect;
     bool gameStarted;  
@@ -44,6 +48,7 @@ private:
     int fontSize;
     int windowWidth;
     int windowHeight;
+    int playerLives;
 
 
 };

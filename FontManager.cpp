@@ -61,6 +61,7 @@ SDL_Texture* FontManager::createTextTexture(const std::string& text, SDL_Color t
 
 
 void FontManager::getTextSize(const std::string& text, SDL_Color textColor, int* width, int* height) {
+    //We check if the font is initialized
     if (!font) {
         std::cerr << "Font not initialized!" << std::endl;
         *width = 0;
@@ -68,6 +69,7 @@ void FontManager::getTextSize(const std::string& text, SDL_Color textColor, int*
         return;
     }
 
+    // We get the dimensions of the rendered text
     if (TTF_SizeText(font, text.c_str(), width, height) != 0) {
         std::cerr << "Failed to get text size: " << TTF_GetError() << std::endl;
         *width = 0;
