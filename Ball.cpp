@@ -5,9 +5,6 @@ Ball::Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWid
     : x(x), y(y), radius(radius), velocityX(velocityX), velocityY(velocityY), windowWidth(windowWidth),
     windowHeight(windowHeight), initialX(x), initialY(y), isBallMoving(false){}
 
-
-//const referenc
-
 void Ball::Update(Paddle& paddle, Game& game) {
     // Check if the game has started
     if (isBallMoving) {
@@ -51,7 +48,6 @@ void Ball::Update(Paddle& paddle, Game& game) {
 }
 
 
-
 void Ball::Render(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_Rect rect = GetRect();
@@ -78,7 +74,6 @@ void Ball::ChangeDirectionY() {
 //    this->initialY = initialY;
 //}
 
-
 void Ball::setX(int x) {
 
     this->x = x;
@@ -89,32 +84,12 @@ void Ball::setY(int y) {
     this->y = y;
 }
 
-int Ball::getX() {
-    return x;
-}
-
-int Ball::getY() {
-    return y;
-}
-
-int Ball::getRadius() {
-    return radius;
-}
-
 void Ball::setRadius(int radius) {
     this->radius = radius;
 }
 
-int Ball::getVelocityX() {
-    return this->velocityX;
-}
-
 void Ball::setVelocityX(int velocityX) {
     this->velocityX = velocityX;
-}
-
-int Ball::getVelocityY() {
-    return this->velocityY;
 }
 
 void Ball::setVelocityY(int velocityY) {
@@ -123,6 +98,26 @@ void Ball::setVelocityY(int velocityY) {
 
 void Ball::setBallMoving(bool state) {
     this->isBallMoving = state;
+}
+
+int Ball::getX() const {
+    return x;
+}
+
+int Ball::getY() const {
+    return y;
+}
+
+int Ball::getRadius() const {
+    return radius;
+}
+
+int Ball::getVelocityX() const{
+    return this->velocityX;
+}
+
+int Ball::getVelocityY() const {
+    return this->velocityY;
 }
 
 bool Ball::getBallState() const {

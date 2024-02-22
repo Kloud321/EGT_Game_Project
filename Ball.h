@@ -24,25 +24,25 @@ public:
     void ChangeDirectionY();
 
     void setWidth(int);
-    int getWidth();
+    int getWidth() const;
 
     void setHeight(int);
-    int getHeight();
+    int getHeight() const;
 
     void setX(int);
-    int getX();
+    int getX() const;
 
     void setY(int);
-    int getY();
+    int getY() const;
 
     void setRadius(int);
-    int getRadius();
+    int getRadius() const;
 
     void setVelocityX(int);
-    int getVelocityX();
+    int getVelocityX() const;
 
     void setVelocityY(int);
-    int getVelocityY();
+    int getVelocityY() const;
 
 
     void setBallMoving(bool);

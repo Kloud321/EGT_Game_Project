@@ -127,14 +127,12 @@ void Game::HandleEvents() {
                 }
             }
             else if (gameStarted && event.button.button == SDL_BUTTON_LEFT) {
-                if (!ball.getBallState()) { // Only toggle ball movement if it's not already moving
+                // Only toggle ball movement if it's not already moving
+                if (!ball.getBallState()) { 
                     // Toggle ball movement
                     ball.setBallMoving(true);
                 }
-                    // Start the ball moving by giving it some initial velocity
                     cout << "Ball is moving" << endl;
-                    cout << ball.getVelocityX() << "  " << ball.getVelocityY() << endl;
-                   
                 }
          
             break;

@@ -16,16 +16,16 @@ public:
     SDL_Rect GetRect();
 
     void setWidth(int);
-    int getWidth();
+    int getWidth() const;
 
     void setHeight(int);
-    int getHeight();
+    int getHeight() const;
 
     void setX(int);
-    int getX();
+    int getX() const;
 
     void setY(int);
-    int getY();
+    int getY() const;
 
 private:
     int x;
