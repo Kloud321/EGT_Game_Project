@@ -29,6 +29,7 @@ public:
     int getWindowHeight() const;
     int getLives() const;
     void setLives(int);
+    bool checkGameStarted() const;
 
 private:
     SDL_Rect startButtonRect;
@@ -44,7 +45,7 @@ private:
     std::vector<Brick> bricks;
     Scoreboard scoreboard;
     FileHandler fileHandler;
-    FontManager* fontManager;
+    FontManager fontManager;
     int fontSize;
     int windowWidth;
     int windowHeight;

@@ -3,14 +3,12 @@
 
 #include <iostream>
 
-Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(0), paddle(0, 0, 0, 0), ball(0, 0, 0, 0, 0, 0, 0), scoreboard(0), gameStarted(false), fontSize(85), playerLives(2) {
+Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(0), paddle(0, 0, 0, 0),
 
-    fontManager = new FontManager();
-}
+ball(0, 0, 0, 0, 0, 0, 0), scoreboard(0), gameStarted(false), fontSize(85), playerLives(2), fontManager(){}
 
 Game::~Game() {
 
-    delete fontManager;
 }
 
 bool Game::Init(const char* title, int xpos, int ypos, int width, int height, int flags) {
@@ -27,11 +25,11 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 std::cout << "renderer creation success\n";
                 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
+                // Image init
                 IMG_Init(IMG_INIT_PNG);
                 
-     
                 // Load texture using TextureManager
-                if (!TextureManager::Instance()->loadTexture("images/pic1.bmp", "background", renderer)) {
+                if (!TextureManager::Instance()->loadTexture("images/b.bmp", "background", renderer)) {
                     std::cerr << "Failed to load texture!" << std::endl;
                     return false;
                 }
@@ -46,7 +44,7 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 }
 
                 // Load font
-                if (!fontManager->loadFont("D:\\Private folder\\University and styduing\\EGT\\FreeORG C++ Course\\VS Projects EGT\\EGT_Game_Project\\EGT_Game_Project\\Fonts\\ARCADE_I.ttf", fontSize)) {
+                if (!fontManager.loadFont("D:\\Private folder\\University and styduing\\EGT\\FreeORG C++ Course\\VS Projects EGT\\EGT_Game_Project\\EGT_Game_Project\\Fonts\\ARCADE_I.ttf", fontSize)) {
                     return false;
                 }
                 else {
@@ -85,7 +83,8 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 int ballRadius = 5;
                 int ballX = paddleX + paddleWidth / 2; // Center of the paddle horizontally
                 int ballY = paddleY - ballRadius; // On top of the paddle
-
+                //ball.setInitialPosition(ballX, ballY);
+       
                 paddle = Paddle(paddleX, paddleY, paddleWidth, paddleHeight);
                 ball = Ball(ballX, ballY, ballRadius, 6, 6, windowWidth, windowHeight);
 
@@ -117,7 +116,6 @@ void Game::HandleEvents() {
             running = false;
             break;
 
-        
         case SDL_MOUSEBUTTONDOWN:
             if (!gameStarted && event.button.button == SDL_BUTTON_LEFT) {
                 int mouseX, mouseY;
@@ -125,37 +123,30 @@ void Game::HandleEvents() {
                 if (IsMouseOverStartButton(mouseX, mouseY)) {
                     // Start the game
                     gameStarted = true;
+                    ball.setBallMoving(true);
                 }
             }
-            else {
-
-                if (event.button.button == SDL_BUTTON_LEFT) {
+            else if (gameStarted && event.button.button == SDL_BUTTON_LEFT) {
+                if (!ball.getBallState()) { // Only toggle ball movement if it's not already moving
+                    // Toggle ball movement
+                    ball.setBallMoving(true);
+                }
                     // Start the ball moving by giving it some initial velocity
-                    cout << "Move Ball" << endl;
+                    cout << "Ball is moving" << endl;
                     cout << ball.getVelocityX() << "  " << ball.getVelocityY() << endl;
-                    cout << ball.getX() << "  " << ball.getY() << endl;
-                    ball.setVelocityX(2); // Example initial velocity
-                    ball.setVelocityY(2); // Example initial velocity
+                   
                 }
-          
-            }
+         
             break;
 
 
         case SDL_WINDOWEVENT:
             if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
 
-                cout << "Resized Window" << endl;
-                cout << "Old WW " << windowWidth << endl;
-                cout << "Old WW " << windowHeight << endl;
-
-                cout << " asdsad " << endl;
                 // Update window dimensions
                 windowWidth = event.window.data1;
-                cout << "New WW" << windowWidth << endl;
                 windowHeight = event.window.data2;
-                cout << "New WH" << windowHeight << endl;
-
+        
                 // Recalculate paddle position to remain at the bottom
                 int paddleWidth = paddle.getWidth();
                 int paddleHeight = paddle.getHeight();
@@ -189,14 +180,14 @@ void Game::RenderStartScreen() {
     // DRAW FONT
     SDL_Color textColor = { 255, 255, 255 }; // White color
     int textWidth, textHeight;
-    fontManager->getTextSize("START", textColor, &textWidth, &textHeight);
+    fontManager.getTextSize("START", textColor, &textWidth, &textHeight);
     int buttonWidth = textWidth + 10; // Add padding
     int buttonHeight = textHeight + 10; // Add padding
     startButtonRect.x = (getWindowWidth() - buttonWidth) / 2;
     startButtonRect.y = (getWindowHeight() - buttonHeight) / 2;
     startButtonRect.w = buttonWidth;
     startButtonRect.h = buttonHeight;
-    fontManager->renderText("START", textColor, renderer, startButtonRect.x + 5, startButtonRect.y + 5);
+    fontManager.renderText("START", textColor, renderer, startButtonRect.x + 5, startButtonRect.y + 5);
 
     // Draw border around the start button
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color
@@ -213,8 +204,8 @@ bool Game::IsMouseOverStartButton(int mouseX, int mouseY) {
 }
 
 void Game::Update() {
-
-    ball.Update();
+    // *this - gives us the actual object
+    ball.Update(paddle, *this);
 }
 
 void Game::Render() {
@@ -282,7 +273,6 @@ int Game::getWindowWidth() const {
     return this->windowWidth;
 }
 
-
 int Game::getLives() const {
 
     return this->playerLives;
@@ -291,4 +281,10 @@ int Game::getLives() const {
 void Game::setLives(int lives) {
 
     this->playerLives = lives;
+}
+
+
+bool Game::checkGameStarted() const {
+
+    return this->gameStarted;
 }
