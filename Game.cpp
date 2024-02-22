@@ -116,6 +116,15 @@ void Game::HandleEvents() {
             running = false;
             break;
 
+
+        case SDL_MOUSEMOTION:
+            // if gameStarted we get the mouse X position and update paddle X 
+            if (gameStarted && ball.getBallState() ==true) {
+                int mouseX = event.motion.x;
+                paddle.setX(mouseX - paddle.getWidth() / 2);
+            }
+            break;
+
         case SDL_MOUSEBUTTONDOWN:
             if (!gameStarted && event.button.button == SDL_BUTTON_LEFT) {
                 int mouseX, mouseY;
@@ -123,7 +132,7 @@ void Game::HandleEvents() {
                 if (IsMouseOverStartButton(mouseX, mouseY)) {
                     // Start the game
                     gameStarted = true;
-                    ball.setBallMoving(true);
+              
                 }
             }
             else if (gameStarted && event.button.button == SDL_BUTTON_LEFT) {
@@ -136,7 +145,6 @@ void Game::HandleEvents() {
                 }
          
             break;
-
 
         case SDL_WINDOWEVENT:
             if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
@@ -204,6 +212,13 @@ bool Game::IsMouseOverStartButton(int mouseX, int mouseY) {
 void Game::Update() {
     // *this - gives us the actual object
     ball.Update(paddle, *this);
+
+    // reset
+    if (ball.getY() > getWindowHeight()) {
+        int paddleX = (getWindowWidth() - paddle.getWidth()) / 2;
+        paddle.setX(paddleX);
+  
+    }
 }
 
 void Game::Render() {
@@ -280,7 +295,6 @@ void Game::setLives(int lives) {
 
     this->playerLives = lives;
 }
-
 
 bool Game::checkGameStarted() const {
 

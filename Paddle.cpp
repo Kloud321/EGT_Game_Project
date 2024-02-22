@@ -21,6 +21,7 @@ SDL_Rect Paddle::GetRect() {
     return { x, y, width, height };
 }
 
+
 void Paddle::setWidth(int width) {
 
     this->width = width;

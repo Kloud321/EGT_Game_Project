@@ -15,6 +15,9 @@ public:
     void Render(SDL_Renderer* renderer);
     SDL_Rect GetRect();
 
+
+    void update();
+
     void setWidth(int);
     int getWidth() const;
 
