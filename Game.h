@@ -20,6 +20,7 @@ public:
     void Render();
     bool IsRunning();
     void Clean();
+    void InitBricks();
 
     void RunGameLoop();
     void RenderStartScreen();

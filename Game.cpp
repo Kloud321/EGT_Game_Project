@@ -25,6 +25,7 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 std::cout << "renderer creation success\n";
                 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
+                InitBricks();
                 // Image init
                 IMG_Init(IMG_INIT_PNG);
                 
@@ -212,45 +213,64 @@ bool Game::IsMouseOverStartButton(int mouseX, int mouseY) {
 }
 
 void Game::Update() {
-    // *this - gives us the actual object
 
-    //if(!ball.Update(paddle, *this))
-    //{
-    //    // decrease lives
-    //    //if lives > 0
-    //    ball = Ball();
-    //    paddle = Paddle();
-    //    //else game over
-    //}
+    if (!ball.Update(paddle)) {
 
-    // reset
-
-    if (!ball.UpdateTest(paddle)) {
-
-        cout << "OUTSUIDE"<< ball.getY() << endl;
-
+        cout << "OUTSUIDE" << ball.getY() << endl;
+        setLives(getLives() - 1);
+        cout << "Lives Left" << getLives() << endl;
         if (getLives() > 0) {
             if (ball.getY() >= getWindowHeight()) {
                 cout << "WE are inside" << endl;
                 int paddleX = (getWindowWidth() - paddle.getWidth()) / 2;
                 paddle.setX(paddleX);
             }
+            ball.setX(ball.getInitialX());
+            ball.setY(ball.getInitialY());
+            ball.setVelocityX(6);
+            ball.setVelocityY(6);
+
+            cout << ball.getY() << endl;
+            cout << getWindowHeight() << endl;
         }
-
-        ball.setX(ball.getInitialX());
-        ball.setY(ball.getInitialY());
-        ball.setVelocityX(6);
-        ball.setVelocityY(6);
-
-        cout << ball.getY() << endl;
-        cout << getWindowHeight() << endl;
-
-        setLives(getLives() - 1);
-    }
-    else {
-        cout << "Game over!" << endl;
+        else {
+            cout << "Game over!" << endl;
+        }
     }
 }
+
+void Game::InitBricks() {
+    const int brickWidth = 60;
+    const int brickHeight = 30;
+    const int spacing = 1;
+
+    int WINDOW_HEIGHT = 600;
+    cout << "Height " << windowWidth << endl;
+    int WINDOW_WIDTH = 1300;
+    cout << "WIDTH " << windowWidth << endl;
+
+    int leftCubeStartX = spacing;
+    int leftCubeStartY = (WINDOW_HEIGHT - (8 * (brickHeight + spacing))) / 2;
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            int x = leftCubeStartX + j * (brickWidth + spacing);
+            int y = leftCubeStartY + i * (brickHeight + spacing);
+            bricks.push_back(Brick(x, y, brickWidth, brickHeight, true));
+        }
+    }
+
+    int rightCubeStartX = WINDOW_WIDTH - (3 * (brickWidth + spacing)) - spacing;
+    int rightCubeStartY = (WINDOW_HEIGHT - (8 * (brickHeight + spacing))) / 2;
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            int x = rightCubeStartX + j * (brickWidth + spacing);
+            int y = rightCubeStartY + i * (brickHeight + spacing);
+            bricks.push_back(Brick(x, y, brickWidth, brickHeight, true));
+        }
+    }
+
+}
+
 
 void Game::Render() {
     if (!gameStarted) {
@@ -258,14 +278,14 @@ void Game::Render() {
     }
     else
     {
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_SetRenderDrawColor(renderer, 128, 0, 0, 255);
         SDL_RenderClear(renderer);
 
         paddle.Render(renderer);
         ball.Render(renderer);
-        /*   for (auto& brick : bricks) {
+        for (auto& brick : bricks) {
                brick.Render(renderer);
-           }*/
+           }
            //scoreboard.Render(renderer);
 
         SDL_RenderPresent(renderer);
@@ -278,9 +298,9 @@ bool Game::IsRunning() {
 }
 
 void Game::Clean() {
-    std::cout << "cleaning game\n";
+    cout << "cleaning game\n";
 
-    //TextureManager::Instance()->clean();
+    TextureManager::Instance()->clean();
 
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
