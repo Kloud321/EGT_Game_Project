@@ -137,11 +137,13 @@ void Game::HandleEvents() {
             }
             else if (gameStarted && event.button.button == SDL_BUTTON_LEFT) {
                 // Only toggle ball movement if it's not already moving
+                cout << "BALL STATE" << ball.getBallState() << endl;
                 if (!ball.getBallState()) { 
                     // Toggle ball movement
                     ball.setBallMoving(true);
-                }
                     cout << "Ball is moving" << endl;
+                   
+                }
                 }
          
             break;
@@ -211,13 +213,42 @@ bool Game::IsMouseOverStartButton(int mouseX, int mouseY) {
 
 void Game::Update() {
     // *this - gives us the actual object
-    ball.Update(paddle, *this);
+
+    //if(!ball.Update(paddle, *this))
+    //{
+    //    // decrease lives
+    //    //if lives > 0
+    //    ball = Ball();
+    //    paddle = Paddle();
+    //    //else game over
+    //}
 
     // reset
-    if (ball.getY() > getWindowHeight()) {
-        int paddleX = (getWindowWidth() - paddle.getWidth()) / 2;
-        paddle.setX(paddleX);
-  
+
+    if (!ball.UpdateTest(paddle)) {
+
+        cout << "OUTSUIDE"<< ball.getY() << endl;
+
+        if (getLives() > 0) {
+            if (ball.getY() >= getWindowHeight()) {
+                cout << "WE are inside" << endl;
+                int paddleX = (getWindowWidth() - paddle.getWidth()) / 2;
+                paddle.setX(paddleX);
+            }
+        }
+
+        ball.setX(ball.getInitialX());
+        ball.setY(ball.getInitialY());
+        ball.setVelocityX(6);
+        ball.setVelocityY(6);
+
+        cout << ball.getY() << endl;
+        cout << getWindowHeight() << endl;
+
+        setLives(getLives() - 1);
+    }
+    else {
+        cout << "Game over!" << endl;
     }
 }
 
