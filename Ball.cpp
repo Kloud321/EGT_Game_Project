@@ -5,44 +5,8 @@ Ball::Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWid
     : x(x), y(y), radius(radius), velocityX(velocityX), velocityY(velocityY), windowWidth(windowWidth),
     windowHeight(windowHeight), initialX(x), initialY(y), isBallMoving(false){}
 
-//void Ball::Update(Paddle& paddle, Game& game) {
-//    // Check if the game has started
-//    if (isBallMoving) {
-//        // Update ball position
-//        x += velocityX;
-//        y += velocityY;
-//
-//        // Check for collisions with window boundaries and paddle
-//        if (x - radius < 0 || x + radius > windowWidth) {
-//            velocityX = -velocityX; // Reverse horizontal velocity
-//        }
-//        if (y - radius < 0) {
-//            velocityY = -velocityY; // Reverse vertical velocity for top boundary
-//        }
-//
-//        else if(x > paddle.getX() && x < paddle.getX() + paddle.getWidth() && y + radius > paddle.getY()) {
-//            velocityY = -velocityY; // Reverse vertical velocity for paddle
-//        }
-// 
-//        // Check for collision with paddle  - paddle.getHeight()
-//        else if (y + radius > windowHeight) {
-//            setBallMoving(false);
-//
-//            // Ball went below paddle, decrement lives and check if lives > 0
-//            game.setLives(game.getLives() - 1);
-//            cout << "LIVES" << game.getLives() << endl;
-//           
-//            }
-//            else {
-//                    
-//                cout << "Game is over" << endl;
-//                  
-//            }
-//        }
-//}
 
-
-bool Ball::UpdateTest(Paddle& paddle) {
+bool Ball::Update(Paddle& paddle) {
     if (isBallMoving) {
         // Update ball position
         x += velocityX;
@@ -64,11 +28,6 @@ bool Ball::UpdateTest(Paddle& paddle) {
         else if (y + radius > windowHeight) {
             setBallMoving(false);
             return false;
-
-            // Ball went below paddle, decrement lives and check if lives > 0
-            //game.setLives(game.getLives() - 1);
-            //cout << "LIVES" << game.getLives() << endl;
-
         }
        
     }
@@ -94,12 +53,6 @@ void Ball::ChangeDirectionX() {
 void Ball::ChangeDirectionY() {
     velocityY = -velocityY;
 }
-
-
-//Ball::setInitialPosition(int initialX, int initialY) {
-//    this->initialX = initialX;
-//    this->initialY = initialY;
-//}
 
 void Ball::setX(int x) {
 

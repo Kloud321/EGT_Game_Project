@@ -14,9 +14,8 @@ class Ball {
 public:
     Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWidth, int windowHeight);
 
-    //void Update(Paddle& paddle, Game& game);
-    bool UpdateTest(Paddle& paddle);
- 
+    bool Update(Paddle& paddle);
+
     void Render(SDL_Renderer* renderer);
 
     SDL_Rect GetRect();
@@ -51,8 +50,6 @@ public:
 
     int getInitialX() const;
     int getInitialY() const;
-
-    //void setInitialPosition(int, int);
 
 private:
     int x;
