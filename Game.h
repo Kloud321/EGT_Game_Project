@@ -18,20 +18,27 @@ public:
     void HandleEvents();
     void Update();
     void Render();
+
     bool IsRunning();
     void Clean();
+
+    void InitStartButton();
+    bool IsMouseOverStartButton(int, int);
+
+    bool checkGameStarted() const;
+
     void InitBricks();
+    void InitPaddleAndBall();
 
     void RunGameLoop();
     void RenderStartScreen();
-    bool IsMouseOverStartButton(int, int);
-
+  
     int getWindowWidth() const;
     int getWindowHeight() const;
+
     int getLives() const;
     void setLives(int);
-    bool checkGameStarted() const;
-
+ 
 private:
     SDL_Rect startButtonRect;
     bool gameStarted;  

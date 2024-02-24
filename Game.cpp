@@ -25,10 +25,10 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 std::cout << "renderer creation success\n";
                 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
-                InitBricks();
+           
                 // Image init
                 IMG_Init(IMG_INIT_PNG);
-                
+              
                 // Load texture using TextureManager
                 if (!TextureManager::Instance()->loadTexture("images/b.bmp", "background", renderer)) {
                     std::cerr << "Failed to load texture!" << std::endl;
@@ -56,39 +56,15 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 windowWidth = width;
                 windowHeight = height;
 
-                // ----------------------------------------------//
+                //START BUTTON init
+                InitStartButton();
 
-                //START BUTTON
+                // Init paddle and ball
+                InitPaddleAndBall();
 
-                int BUTTON_WIDTH = 250;
-                int BUTTON_HEIGHT = 125;
-
-                startButtonRect.x = (getWindowWidth() - BUTTON_WIDTH) / 2;
-                startButtonRect.y = (getWindowHeight() - BUTTON_HEIGHT) / 2;
-                startButtonRect.w = BUTTON_WIDTH;
-                startButtonRect.h = BUTTON_HEIGHT;
-
-                // ------------------------------------------------//
-
-                // PADDLE
-
-                int paddleWidth = 150;
-                int paddleHeight = 30;
-            
-                // WINDOW_HEIGHT - paddleheight to get to center horizontally
-                int paddleX = (width - paddleWidth) / 2; 
-
-                // WINDOW_HEIGHT - paddleheight to get the bottom of the screen
-                int paddleY = height - paddleHeight; 
-
-                int ballRadius = 5;
-                int ballX = paddleX + paddleWidth / 2; // Center of the paddle horizontally
-                int ballY = paddleY - ballRadius; // On top of the paddle
-                //ball.setInitialPosition(ballX, ballY);
-       
-                paddle = Paddle(paddleX, paddleY, paddleWidth, paddleHeight);
-                ball = Ball(ballX, ballY, ballRadius, 6, 6, windowWidth, windowHeight);
-
+                // Init bricks
+                InitBricks();
+                
             }
             else {
                 std::cout << "renderer init failed\n";
@@ -216,12 +192,10 @@ void Game::Update() {
 
     if (!ball.Update(paddle)) {
 
-        cout << "OUTSUIDE" << ball.getY() << endl;
         setLives(getLives() - 1);
         cout << "Lives Left" << getLives() << endl;
         if (getLives() > 0) {
             if (ball.getY() >= getWindowHeight()) {
-                cout << "WE are inside" << endl;
                 int paddleX = (getWindowWidth() - paddle.getWidth()) / 2;
                 paddle.setX(paddleX);
             }
@@ -239,38 +213,116 @@ void Game::Update() {
     }
 }
 
+void Game::InitStartButton() {
+    int BUTTON_WIDTH = 250;
+    int BUTTON_HEIGHT = 125;
+
+    startButtonRect.x = (getWindowWidth() - BUTTON_WIDTH) / 2;
+    startButtonRect.y = (getWindowHeight() - BUTTON_HEIGHT) / 2;
+    startButtonRect.w = BUTTON_WIDTH;
+    startButtonRect.h = BUTTON_HEIGHT;
+}
+
+void Game::InitPaddleAndBall() {
+
+    // PADDLE width and height;
+    int paddleWidth = 150;
+    int paddleHeight = 30;
+
+    // X and Y pos for paddle
+    int paddleX = (getWindowWidth() - paddleWidth) / 2;  // (WINDOW_HEIGHT - paddleheight) devided by 2 to get to center horizontally
+    int paddleY = getWindowHeight() - paddleHeight; // WINDOW_HEIGHT - paddleheight to get the bottom of the screen
+
+
+    int ballRadius = 5; // Set ball radius
+    int ballX = paddleX + paddleWidth / 2;  // Set ball to the center of the paddle horizontally
+    int ballY = paddleY - ballRadius;  // On top of the paddle
+
+    paddle = Paddle(paddleX, paddleY, paddleWidth, paddleHeight);
+    ball = Ball(ballX, ballY, ballRadius, 6, 6, windowWidth, windowHeight);
+}
+
 void Game::InitBricks() {
     const int brickWidth = 60;
     const int brickHeight = 30;
-    const int spacing = 1;
+    const int spacing = 2;
 
     int WINDOW_HEIGHT = 600;
-    cout << "Height " << windowWidth << endl;
     int WINDOW_WIDTH = 1300;
-    cout << "WIDTH " << windowWidth << endl;
 
+    //X & Y for left cube of bricks
     int leftCubeStartX = spacing;
-    int leftCubeStartY = (WINDOW_HEIGHT - (8 * (brickHeight + spacing))) / 2;
-    for (int i = 0; i < 5; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            int x = leftCubeStartX + j * (brickWidth + spacing);
-            int y = leftCubeStartY + i * (brickHeight + spacing);
-            bricks.push_back(Brick(x, y, brickWidth, brickHeight, true));
+    int leftCubeStartY = (WINDOW_HEIGHT - (12 * (brickHeight + spacing))) / 2;
+
+    for (int row = 0; row < 5; ++row) {
+        for (int col = 0; col < 3; ++col) {
+            int x = leftCubeStartX + col * (brickWidth + spacing);
+            int y = leftCubeStartY + row * (brickHeight + spacing);
+            bricks.push_back(Brick(x, y, brickWidth, brickHeight, false));
         }
     }
 
+    //X & Y for right cube of bricks
     int rightCubeStartX = WINDOW_WIDTH - (3 * (brickWidth + spacing)) - spacing;
-    int rightCubeStartY = (WINDOW_HEIGHT - (8 * (brickHeight + spacing))) / 2;
-    for (int i = 0; i < 5; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            int x = rightCubeStartX + j * (brickWidth + spacing);
-            int y = rightCubeStartY + i * (brickHeight + spacing);
-            bricks.push_back(Brick(x, y, brickWidth, brickHeight, true));
+    int rightCubeStartY = (WINDOW_HEIGHT - (12 * (brickHeight + spacing))) / 2;
+    for (int row = 0; row < 5; ++row) {
+        for (int col = 0; col < 3; ++col) {
+            int x = rightCubeStartX + col * (brickWidth + spacing);
+            int y = rightCubeStartY + row * (brickHeight + spacing);
+            bricks.push_back(Brick(x, y, brickWidth, brickHeight, false));
         }
     }
 
-}
+    //X & Y for the cube in the middle
 
+    int middleCubeWidth = 3 * brickWidth + 2 * spacing;
+    int middleCubeHeight = 5 * brickHeight + 4 * spacing;
+
+    int middleCubeStartX = (WINDOW_WIDTH - middleCubeWidth) / 2;
+    int middleCubeStartY = (WINDOW_HEIGHT - (12 * (brickHeight + spacing))) / 2;
+
+    for (int row = 0; row < 5; ++row) {
+        for (int col = 0; col < 3; ++col) {
+            int x = middleCubeStartX + col * (brickWidth + spacing);
+            int y = middleCubeStartY + row * (brickHeight + spacing);
+            bricks.push_back(Brick(x, y, brickWidth, brickHeight, false));
+        }
+    }
+
+    // Initialize the bricks below the middle cube
+    int startX = (WINDOW_WIDTH - (7 * brickWidth + spacing)) / 2;
+    int startY = middleCubeStartY + middleCubeHeight + brickHeight + 2*spacing; // 1 brick space below the middle cube
+    for (int row = 0; row < 2; ++row) {
+        for (int col = 0; col < 7; ++col) {
+            int x = startX + col * (brickWidth + spacing);
+            int y = startY + row * (brickHeight + spacing);
+            bricks.push_back(Brick(x, y, brickWidth, brickHeight, true)); // Using gray bricks
+        }
+    }
+
+
+    // Initialize the left col |__| shape bricks
+    int startLeftColX = (WINDOW_WIDTH - (7 * brickWidth + spacing)) / 2;
+    int startLeftColY = (WINDOW_HEIGHT - (12 * (brickHeight + spacing))) / 2;
+    for (int row = 0; row < 6; ++row) {
+        for (int col = 0; col < 1; ++col) {
+            int x = startLeftColX + col * (brickWidth + spacing);
+            int y = startLeftColY + row * (brickHeight + spacing);
+            bricks.push_back(Brick(x, y, brickWidth, brickHeight, true)); // Using gray bricks
+        }
+    }
+
+    // Initialize the right col |__| shape bricks
+    int startRightColX = WINDOW_WIDTH - 8 *brickWidth - 5*spacing;
+    int startRightColY = (WINDOW_HEIGHT - (12 * (brickHeight + spacing))) / 2;
+    for (int row = 0; row < 6; ++row) {
+        for (int col = 0; col < 1; ++col) {
+            int x = startRightColX + col * (brickWidth + spacing);
+            int y = startRightColY + row * (brickHeight + spacing);
+            bricks.push_back(Brick(x, y, brickWidth, brickHeight, true)); // Using gray bricks
+        }
+    }
+}
 
 void Game::Render() {
     if (!gameStarted) {
@@ -278,7 +330,7 @@ void Game::Render() {
     }
     else
     {
-        SDL_SetRenderDrawColor(renderer, 128, 0, 0, 255);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
         paddle.Render(renderer);
@@ -290,7 +342,6 @@ void Game::Render() {
 
         SDL_RenderPresent(renderer);
     }
-    
 }
 
 bool Game::IsRunning() {
