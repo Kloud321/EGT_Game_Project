@@ -199,6 +199,7 @@ void Game::Update() {
                 int paddleX = (getWindowWidth() - paddle.getWidth()) / 2;
                 paddle.setX(paddleX);
             }
+            
             ball.setX(ball.getInitialX());
             ball.setY(ball.getInitialY());
             ball.setVelocityX(6);
@@ -206,9 +207,11 @@ void Game::Update() {
 
             cout << ball.getY() << endl;
             cout << getWindowHeight() << endl;
+            
         }
         else {
             cout << "Game over!" << endl;
+
         }
     }
 }
@@ -247,8 +250,8 @@ void Game::InitBricks() {
     const int brickHeight = 30;
     const int spacing = 2;
 
-    int WINDOW_HEIGHT = 600;
-    int WINDOW_WIDTH = 1300;
+    int WINDOW_HEIGHT = getWindowHeight();
+    int WINDOW_WIDTH = getWindowWidth();
 
     //X & Y for left cube of bricks
     int leftCubeStartX = spacing;
@@ -275,10 +278,10 @@ void Game::InitBricks() {
 
     //X & Y for the cube in the middle
 
-    int middleCubeWidth = 3 * brickWidth + 2 * spacing;
+    int middleCubeWidth = 3 * brickWidth + spacing;
     int middleCubeHeight = 5 * brickHeight + 4 * spacing;
 
-    int middleCubeStartX = (WINDOW_WIDTH - middleCubeWidth) / 2;
+    int middleCubeStartX = (WINDOW_WIDTH - middleCubeWidth) / 2 + 2 * spacing;
     int middleCubeStartY = (WINDOW_HEIGHT - (12 * (brickHeight + spacing))) / 2;
 
     for (int row = 0; row < 5; ++row) {
@@ -300,7 +303,6 @@ void Game::InitBricks() {
         }
     }
 
-
     // Initialize the left col |__| shape bricks
     int startLeftColX = (WINDOW_WIDTH - (7 * brickWidth + spacing)) / 2;
     int startLeftColY = (WINDOW_HEIGHT - (12 * (brickHeight + spacing))) / 2;
@@ -313,7 +315,7 @@ void Game::InitBricks() {
     }
 
     // Initialize the right col |__| shape bricks
-    int startRightColX = WINDOW_WIDTH - 8 *brickWidth - 5*spacing;
+    int startRightColX = WINDOW_WIDTH - 8 * brickWidth - 5 *spacing + 1;
     int startRightColY = (WINDOW_HEIGHT - (12 * (brickHeight + spacing))) / 2;
     for (int row = 0; row < 6; ++row) {
         for (int col = 0; col < 1; ++col) {
