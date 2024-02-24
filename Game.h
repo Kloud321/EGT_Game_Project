@@ -27,7 +27,10 @@ public:
     bool checkGameStarted() const;
 
     void InitBricks();
-    void InitPaddleAndBall();
+    void InitPaddle();
+    void InitBall();
+
+    void ResetPaddleAndBall();
 
     void CheckBrickCollision();
 
@@ -39,6 +42,8 @@ public:
 
     int getLives() const;
     void setLives(int);
+
+    int getScore() const;
 
     std::vector<Brick> getBricks() const;
  
@@ -60,6 +65,5 @@ private:
     int windowWidth;
     int windowHeight;
     int playerLives;
-
-
+    int score;
 };

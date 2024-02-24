@@ -5,7 +5,7 @@
 
 Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(0), paddle(0, 0, 0, 0),
 
-ball(0, 0, 0, 0, 0, 0, 0), gameStarted(false), fontSize(85), playerLives(2), fontManager(){}
+ball(0, 0, 0, 0, 0, 0, 0), gameStarted(false), fontSize(85), playerLives(2), fontManager(), score(0) {}
 
 Game::~Game() {
 
@@ -59,8 +59,11 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 //START BUTTON init
                 InitStartButton();
 
-                // Init paddle and ball
-                InitPaddleAndBall();
+                // Init paddle
+                InitPaddle();
+
+                // Init ball 
+                InitBall();
 
                 // Init bricks
                 InitBricks();
@@ -195,19 +198,8 @@ void Game::Update() {
         setLives(getLives() - 1);
         cout << "Lives Left" << getLives() << endl;
         if (getLives() > 0) {
-            if (ball.getY() >= getWindowHeight()) {
-                int paddleX = (getWindowWidth() - paddle.getWidth()) / 2;
-                paddle.setX(paddleX);
-            }
-            
-            ball.setX(ball.getInitialX());
-            ball.setY(ball.getInitialY());
-            ball.setVelocityX(6);
-            ball.setVelocityY(6);
-
-            cout << ball.getY() << endl;
-            cout << getWindowHeight() << endl;
-            
+           
+            ResetPaddleAndBall();
         }
         else {
             cout << "Game over!" << endl;
@@ -226,23 +218,34 @@ void Game::InitStartButton() {
     startButtonRect.h = BUTTON_HEIGHT;
 }
 
-void Game::InitPaddleAndBall() {
+void Game::ResetPaddleAndBall() {
+    InitBall();
+    InitPaddle();
+};
 
+void Game::InitBall() {
+
+    int ballRadius = 5; // Set ball radius
+    cout << "Paddle init ball: " << paddle.getWidth() << endl;
+    cout << "WW: " << getWindowWidth() << endl;
+
+    int ballX = getWindowWidth() / 2;  // Set ball to the center of the paddle horizontally
+    //int ballX = paddle.getX() + paddle.getWidth() / 2;
+    int ballY = getWindowHeight() - paddle.getHeight() - ballRadius;  // On top of the paddle
+
+    ball = Ball(ballX, ballY, ballRadius, 6, 6, getWindowWidth(), getWindowHeight());
+}
+
+void Game::InitPaddle() {
     // PADDLE width and height;
-    int paddleWidth = 150;
-    int paddleHeight = 30;
+    int const paddleWidth = 150;
+    int const paddleHeight = 30;
 
     // X and Y pos for paddle
     int paddleX = (getWindowWidth() - paddleWidth) / 2;  // (WINDOW_HEIGHT - paddleheight) devided by 2 to get to center horizontally
     int paddleY = getWindowHeight() - paddleHeight; // WINDOW_HEIGHT - paddleheight to get the bottom of the screen
 
-
-    int ballRadius = 5; // Set ball radius
-    int ballX = paddleX + paddleWidth / 2;  // Set ball to the center of the paddle horizontally
-    int ballY = paddleY - ballRadius;  // On top of the paddle
-
     paddle = Paddle(paddleX, paddleY, paddleWidth, paddleHeight);
-    ball = Ball(ballX, ballY, ballRadius, 6, 6, windowWidth, windowHeight);
 }
 
 void Game::InitBricks() {
@@ -403,6 +406,10 @@ void Game::setLives(int lives) {
 bool Game::checkGameStarted() const {
 
     return this->gameStarted;
+}
+
+int Game::getScore() const {
+    return this->score;
 }
 
 std::vector<Brick>Game::getBricks() const {
