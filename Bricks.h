@@ -13,6 +13,7 @@ public:
     bool IsBroken() const;
     void Hit();
     SDL_Rect GetRect() const;
+
 private:
     int x;
     int y;
