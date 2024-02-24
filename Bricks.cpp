@@ -19,3 +19,33 @@ void Brick::Hit() {
 SDL_Rect Brick::GetRect() const {
     return { x, y, width, height };
 }
+
+int Brick::getX() const {
+    return this->x;
+}
+
+int Brick::getY() const {
+    return this->y;
+}
+
+int Brick::getWidth() const {
+    return this->width;
+
+}
+
+int Brick::getHeight() const {
+    return this->height;
+
+}
+
+int Brick::getDurability() const {
+    return this->durability;
+}
+
+bool Brick::getIsGray() const {
+    return this->isGray;
+}
+
+void Brick::setIsGray(bool newValue) {
+    this->isGray = newValue;
+}
