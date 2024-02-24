@@ -5,7 +5,6 @@ Ball::Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWid
     : x(x), y(y), radius(radius), velocityX(velocityX), velocityY(velocityY), windowWidth(windowWidth),
     windowHeight(windowHeight), initialX(x), initialY(y), isBallMoving(false){}
 
-
 bool Ball::Update(Paddle& paddle, std::vector<Brick>& bricks) {
     if (isBallMoving) {
         // Update ball position
@@ -19,11 +18,12 @@ bool Ball::Update(Paddle& paddle, std::vector<Brick>& bricks) {
         if (y - radius < 0) {
             velocityY = -velocityY; // Reverse vertical velocity for top boundary
         }
-
-        else if (x > paddle.getX() && x < paddle.getX() + paddle.getWidth() && y + radius > paddle.getY()) {
+                //right sBall  right sPaddle    left sBall          right sPaddle                 bottom ball   top paddle      top ball            bottom paddle
+        else if (x + radius >= paddle.getX() && x - radius <= paddle.getX() + paddle.getWidth() && y + radius > paddle.getY() && y - radius < paddle.getY() + paddle.getHeight()) {
+            // Change ball direction
             velocityY = -velocityY; // Reverse vertical velocity for paddle
         }
-
+ 
         // Check for collision with bricks
         for (auto it = bricks.begin(); it != bricks.end();) {
             Brick& brick = *it;
@@ -43,7 +43,6 @@ bool Ball::Update(Paddle& paddle, std::vector<Brick>& bricks) {
             else {
                 ++it;
             }
-
     }
             // Check for collision with bottom
             if (y + radius > windowHeight) {
@@ -64,14 +63,6 @@ void Ball::Render(SDL_Renderer* renderer) {
 
 SDL_Rect Ball::GetRect(){
     return { x - radius, y - radius, radius * 2, radius * 2 };
-}
-
-void Ball::ChangeDirectionX() {
-    velocityX = -velocityX;
-}
-
-void Ball::ChangeDirectionY() {
-    velocityY = -velocityY;
 }
 
 void Ball::setX(int x) {

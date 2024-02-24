@@ -17,13 +17,10 @@ public:
     Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWidth, int windowHeight);
 
     bool Update(Paddle& paddle, std::vector<Brick>&);
-
+   
     void Render(SDL_Renderer* renderer);
 
     SDL_Rect GetRect();
-
-    void ChangeDirectionX();
-    void ChangeDirectionY();
 
     void setWidth(int);
     int getWidth() const;
