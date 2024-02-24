@@ -4,8 +4,14 @@ Brick::Brick(int x, int y, int width, int height, bool isGray) : x(x), y(y), wid
 
 void Brick::Render(SDL_Renderer* renderer) {
     SDL_Rect brickRect = { x, y, width, height };
-    SDL_SetRenderDrawColor(renderer, isGray ? 128 : 255, isGray ? 128 : 165, isGray ? 128 : 0, 255);
+    SDL_SetRenderDrawColor(renderer, isGray ? 160 : 255, isGray ? 160 : 165, isGray ? 160 : 0, 255);
     SDL_RenderFillRect(renderer, &brickRect);
+
+    if (isGray) {
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color
+        //Outline for bricks
+        SDL_RenderDrawRect(renderer, &brickRect);
+    }
 }
 
 bool Brick::IsBroken() const {
