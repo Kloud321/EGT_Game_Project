@@ -36,6 +36,8 @@ public:
 
     void RunGameLoop();
     void RenderStartScreen();
+    void RenderGameOverScreen();
+    void RenderGameWonScreen();
   
     int getWindowWidth() const;
     int getWindowHeight() const;
@@ -46,10 +48,17 @@ public:
     int getScore() const;
 
     std::vector<Brick> getBricks() const;
- 
+
+    //bool isGameWon(std::vector<Brick>&);
+    bool isGameWon();
+  
 private:
     SDL_Rect startButtonRect;
-    bool gameStarted;  
+    SDL_Rect gameOverRect;
+    SDL_Rect gameWonRect;
+    bool gameStarted; 
+    bool gameOver;
+    bool gameWon;
 
     SDL_Window* window;
     SDL_Renderer* renderer;

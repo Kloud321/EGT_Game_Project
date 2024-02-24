@@ -5,7 +5,7 @@
 
 Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(0), paddle(0, 0, 0, 0),
 
-ball(0, 0, 0, 0, 0, 0, 0), gameStarted(false), fontSize(85), playerLives(2), fontManager(), score(0) {}
+ball(0, 0, 0, 0, 0, 0, 0), gameStarted(false), gameOver(false), gameWon(false), fontSize(85), playerLives(2), fontManager(), score(0) {}
 
 Game::~Game() {
 
@@ -25,12 +25,16 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 std::cout << "renderer creation success\n";
                 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
-           
                 // Image init
                 IMG_Init(IMG_INIT_PNG);
               
                 // Load texture using TextureManager
                 if (!TextureManager::Instance()->loadTexture("images/b.bmp", "background", renderer)) {
+                    std::cerr << "Failed to load texture!" << std::endl;
+                    return false;
+                }
+
+                if (!TextureManager::Instance()->loadTexture("images/black-brick.bmp", "game", renderer)) {
                     std::cerr << "Failed to load texture!" << std::endl;
                     return false;
                 }
@@ -186,6 +190,37 @@ void Game::RenderStartScreen() {
 
 }
 
+void Game::RenderGameOverScreen() {}
+
+void Game::RenderGameWonScreen() {
+    // Clear screen
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    // Draw an image
+    TextureManager::Instance()->drawTexture("background", 0, 0, windowWidth, windowHeight, renderer);
+
+    // DRAW FONT
+    SDL_Color textColor = { 255, 255, 255 }; // White color
+    int textWidth, textHeight;
+    fontManager.getTextSize("YOU WIN", textColor, &textWidth, &textHeight);
+    int buttonWidth = textWidth + 10; // Add padding
+    int buttonHeight = textHeight + 10; // Add padding
+    gameWonRect.x = (getWindowWidth() - buttonWidth) / 2;
+    gameWonRect.y = (getWindowHeight() - buttonHeight) / 2;
+    gameWonRect.w = buttonWidth;
+    gameWonRect.h = buttonHeight;
+    fontManager.renderText("YOU WIN", textColor, renderer, gameWonRect.x + 5, gameWonRect.y + 5);
+
+    // Draw border around the start button
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color
+    SDL_RenderDrawRect(renderer, &gameOverRect);
+
+    // Present renderer
+    SDL_RenderPresent(renderer);
+
+}
+
 bool Game::IsMouseOverStartButton(int mouseX, int mouseY) {
     return mouseX >= startButtonRect.x && mouseX <= startButtonRect.x + startButtonRect.w &&
         mouseY >= startButtonRect.y && mouseY <= startButtonRect.y + startButtonRect.h;
@@ -198,13 +233,16 @@ void Game::Update() {
         setLives(getLives() - 1);
         cout << "Lives Left" << getLives() << endl;
         if (getLives() > 0) {
-           
+
             ResetPaddleAndBall();
         }
         else {
             cout << "Game over!" << endl;
-
+            gameOver = true;
         }
+    }
+    else if (isGameWon()) {
+        gameWon = true;
     }
 }
 
@@ -226,11 +264,7 @@ void Game::ResetPaddleAndBall() {
 void Game::InitBall() {
 
     int ballRadius = 5; // Set ball radius
-    cout << "Paddle init ball: " << paddle.getWidth() << endl;
-    cout << "WW: " << getWindowWidth() << endl;
-
     int ballX = getWindowWidth() / 2;  // Set ball to the center of the paddle horizontally
-    //int ballX = paddle.getX() + paddle.getWidth() / 2;
     int ballY = getWindowHeight() - paddle.getHeight() - ballRadius;  // On top of the paddle
 
     ball = Ball(ballX, ballY, ballRadius, 6, 6, getWindowWidth(), getWindowHeight());
@@ -333,18 +367,24 @@ void Game::Render() {
     if (!gameStarted) {
         RenderStartScreen();
     }
+    else if (gameOver) {
+        RenderGameOverScreen();
+    }
+    else if (gameWon) {
+        RenderGameWonScreen();
+    }
     else
     {
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_SetRenderDrawColor(renderer, 121, 44, 236, 255);
         SDL_RenderClear(renderer);
+
+        TextureManager::Instance()->drawTexture("game", 0, 0, windowWidth, windowHeight, renderer);
 
         paddle.Render(renderer);
         ball.Render(renderer);
         for (auto& brick : bricks) {
                brick.Render(renderer);
            }
-           //scoreboard.Render(renderer);
-
         SDL_RenderPresent(renderer);
     }
 }
@@ -411,6 +451,16 @@ bool Game::checkGameStarted() const {
 int Game::getScore() const {
     return this->score;
 }
+
+bool Game::isGameWon(){
+    for (auto& brick : bricks) {
+        if (!brick.IsBroken()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 std::vector<Brick>Game::getBricks() const {
     return this->bricks;
