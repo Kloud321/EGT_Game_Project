@@ -190,7 +190,34 @@ void Game::RenderStartScreen() {
 
 }
 
-void Game::RenderGameOverScreen() {}
+void Game::RenderGameOverScreen() {
+    // Clear screen
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    // Draw an image
+    TextureManager::Instance()->drawTexture("background", 0, 0, windowWidth, windowHeight, renderer);
+
+    // DRAW FONT
+    SDL_Color textColor = { 255, 255, 255 }; // White color
+    int textWidth, textHeight;
+    fontManager.getTextSize("GAME OVER", textColor, &textWidth, &textHeight);
+    int buttonWidth = textWidth + 10; // Add padding
+    int buttonHeight = textHeight + 10; // Add padding
+    gameOverRect.x = (getWindowWidth() - buttonWidth) / 2;
+    gameOverRect.y = (getWindowHeight() - buttonHeight) / 2;
+    gameOverRect.w = buttonWidth;
+    gameOverRect.h = buttonHeight;
+    fontManager.renderText("GAME OVER", textColor, renderer, gameOverRect.x + 5, gameOverRect.y + 5);
+
+    // Draw border around the start button
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color
+    SDL_RenderDrawRect(renderer, &gameOverRect);
+
+    // Present renderer
+    SDL_RenderPresent(renderer);
+
+}
 
 void Game::RenderGameWonScreen() {
     // Clear screen
@@ -214,7 +241,7 @@ void Game::RenderGameWonScreen() {
 
     // Draw border around the start button
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color
-    SDL_RenderDrawRect(renderer, &gameOverRect);
+    SDL_RenderDrawRect(renderer, &gameWonRect);
 
     // Present renderer
     SDL_RenderPresent(renderer);
