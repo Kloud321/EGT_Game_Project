@@ -43,6 +43,7 @@ bool Ball::Update(Paddle& paddle, std::vector<Brick>& bricks) {
             else {
                 ++it;
             }
+
     }
             // Check for collision with bottom
             if (y + radius > windowHeight) {
