@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 #include "Paddle.h"
+#include "Bricks.h"
+#include <vector>
 
 using std::cout;
 using std::endl;
@@ -14,7 +16,7 @@ class Ball {
 public:
     Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWidth, int windowHeight);
 
-    bool Update(Paddle& paddle);
+    bool Update(Paddle& paddle, std::vector<Brick>&);
 
     void Render(SDL_Renderer* renderer);
 
@@ -44,7 +46,6 @@ public:
     void setVelocityY(int);
     int getVelocityY() const;
 
-
     void setBallMoving(bool);
     bool getBallState() const;
 
@@ -62,6 +63,4 @@ private:
     int initialX;
     int initialY;
     bool isBallMoving;
-
-
 };

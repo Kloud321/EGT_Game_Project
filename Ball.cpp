@@ -6,7 +6,7 @@ Ball::Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWid
     windowHeight(windowHeight), initialX(x), initialY(y), isBallMoving(false){}
 
 
-bool Ball::Update(Paddle& paddle) {
+bool Ball::Update(Paddle& paddle, std::vector<Brick>& bricks) {
     if (isBallMoving) {
         // Update ball position
         x += velocityX;
@@ -24,12 +24,31 @@ bool Ball::Update(Paddle& paddle) {
             velocityY = -velocityY; // Reverse vertical velocity for paddle
         }
 
-        // Check for collision with paddle  - paddle.getHeight()
-        else if (y + radius > windowHeight) {
-            setBallMoving(false);
-            return false;
-        }
-       
+        // Check for collision with bricks
+        for (auto it = bricks.begin(); it != bricks.end();) {
+            Brick& brick = *it;
+
+            if (x + radius > brick.getX() && x - radius < brick.getX() + brick.getWidth() &&
+                y + radius > brick.getY() && y - radius < brick.getY() + brick.getHeight()) {
+                // Collision with brick
+                velocityY = -velocityY; // Reverse
+                brick.Hit();
+                if (brick.getDurability() == 1 && brick.getIsGray()) {
+                    brick.setIsGray(false);
+                }
+            }
+            if (brick.IsBroken()) {
+                it = bricks.erase(it);
+            }
+            else {
+                ++it;
+            }
+    }
+            // Check for collision with bottom
+            if (y + radius > windowHeight) {
+                setBallMoving(false);
+                return false;
+            }
     }
     return true;
 }
