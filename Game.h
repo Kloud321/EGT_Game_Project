@@ -5,7 +5,6 @@
 #include "Paddle.h"
 #include "Ball.h"
 #include "Bricks.h"
-#include "Scoreboard.h"
 #include "FileHandler.h"
 #include "FontManager.h"
 #include <vector>
@@ -30,6 +29,8 @@ public:
     void InitBricks();
     void InitPaddleAndBall();
 
+    void CheckBrickCollision();
+
     void RunGameLoop();
     void RenderStartScreen();
   
@@ -38,6 +39,8 @@ public:
 
     int getLives() const;
     void setLives(int);
+
+    std::vector<Brick> getBricks() const;
  
 private:
     SDL_Rect startButtonRect;
@@ -51,7 +54,6 @@ private:
     Paddle paddle;
     Ball ball;
     std::vector<Brick> bricks;
-    Scoreboard scoreboard;
     FileHandler fileHandler;
     FontManager fontManager;
     int fontSize;

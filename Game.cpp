@@ -5,7 +5,7 @@
 
 Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(0), paddle(0, 0, 0, 0),
 
-ball(0, 0, 0, 0, 0, 0, 0), scoreboard(0), gameStarted(false), fontSize(85), playerLives(2), fontManager(){}
+ball(0, 0, 0, 0, 0, 0, 0), gameStarted(false), fontSize(85), playerLives(2), fontManager(){}
 
 Game::~Game() {
 
@@ -190,7 +190,7 @@ bool Game::IsMouseOverStartButton(int mouseX, int mouseY) {
 
 void Game::Update() {
 
-    if (!ball.Update(paddle)) {
+    if (!ball.Update(paddle, bricks)) {
 
         setLives(getLives() - 1);
         cout << "Lives Left" << getLives() << endl;
@@ -403,4 +403,8 @@ void Game::setLives(int lives) {
 bool Game::checkGameStarted() const {
 
     return this->gameStarted;
+}
+
+std::vector<Brick>Game::getBricks() const {
+    return this->bricks;
 }
