@@ -31,6 +31,5 @@ public:
 
 private:
 	std::map<std::string, SDL_Texture*> textureMap;
-	//TextureManager() {}
 	static TextureManager* instance;
 };
