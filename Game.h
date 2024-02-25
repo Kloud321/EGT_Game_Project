@@ -47,6 +47,8 @@ public:
     int getScore() const;
     void setScore(int);
 
+    void TogglePause();
+
     std::vector<Brick> getBricks() const;
 
 private:
@@ -60,11 +62,12 @@ private:
     bool gameStarted; 
     bool gameOver;
     bool gameWon;
+    bool running;
+    bool paused;
 
     SDL_Window* window;
     SDL_Renderer* renderer;
    
-    bool running;
     int currentFrame;
     Paddle paddle;
     Ball ball;

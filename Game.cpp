@@ -5,7 +5,7 @@
 
 Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(0), paddle(0, 0, 0, 0),
 
-ball(0, 0, 0, 0, 0, 0, 0), gameStarted(false), gameOver(false), gameWon(false), fontSize(85), playerLives(2), fontManager(), fileHandler(), score(0) {}
+ball(0, 0, 0, 0, 0, 0, 0), gameStarted(false), gameOver(false), gameWon(false), paused(false), fontSize(85), playerLives(2), fontManager(), fileHandler(), score(0) {}
 
 Game::~Game() {
 
@@ -113,7 +113,7 @@ void Game::HandleEvents() {
 
         case SDL_MOUSEMOTION:
             // if gameStarted we get the mouse X position and update paddle X 
-            if (gameStarted && ball.getBallState() ==true) {
+            if (!paused && gameStarted && ball.getBallState() ==true) {
                 int mouseX = event.motion.x;
                 paddle.setX(mouseX - paddle.getWidth() / 2);
             }
@@ -126,20 +126,28 @@ void Game::HandleEvents() {
                 if (IsMouseOverStartButton(mouseX, mouseY)) {
                     // Start the game
                     gameStarted = true;
-              
+
                 }
             }
             else if (gameStarted && event.button.button == SDL_BUTTON_LEFT) {
                 // Only toggle ball movement if it's not already moving
-                cout << "BALL STATE" << ball.getBallState() << endl;
-                if (!ball.getBallState()) { 
-                    // Toggle ball movement
-                    ball.setBallMoving(true);
-                    cout << "Ball is moving" << endl;
-                   
+                if (!paused) {
+                    cout << "BALL STATE: " << ball.getBallState() << endl;
+                    if (!ball.getBallState()) {
+                        // Toggle ball movement
+                        ball.setBallMoving(true);
+                        cout << "Ball is moving" << endl;
+                    }
                 }
-                }
-         
+            }
+            break;
+
+
+        case SDL_KEYDOWN:
+            if (event.key.keysym.sym == SDLK_SPACE) {
+                // Toggle on and off pause state
+                TogglePause();
+            }
             break;
 
         case SDL_WINDOWEVENT:
@@ -271,7 +279,7 @@ void Game::RenderTopScreenElements() {
     fontManager.renderText(livesText.c_str(), textColor, renderer, xNummberOfLivesRect.x, xNummberOfLivesRect.y);
 
     // Score
-    SDL_Rect scoreRect = { (getWindowWidth() - 100) / 2 + 15, 10, 30, 15 };
+    SDL_Rect scoreRect = { (getWindowWidth() - 100) / 2, 10, 30, 15 };
     std::string scoreText = std::to_string(getScore());
     fontManager.renderText(scoreText.c_str(), textColor, renderer, scoreRect.x, scoreRect.y);
 
@@ -486,7 +494,9 @@ void Game::RunGameLoop() {
         frameStart = SDL_GetTicks();
 
         HandleEvents();
-        Update();
+        if (!paused) {
+            Update();
+        }
         Render();
 
         frameTime = SDL_GetTicks() - frameStart;
@@ -539,6 +549,10 @@ int Game::getScore() const{
 void Game::setScore(int newScore) {
 
     this->score = newScore;
+}
+
+void Game::TogglePause() {
+    paused = !paused;
 }
 
 std::vector<Brick>Game::getBricks() const {
