@@ -58,7 +58,6 @@ void Ball::Render(SDL_Renderer* renderer) {
     SDL_Rect rect = GetRect();
     SDL_RenderDrawRect(renderer, &rect);
     SDL_RenderFillRect(renderer, &rect);
-    //std::cout << "Rendering ball\n";
 }
 
 SDL_Rect Ball::GetRect(){
