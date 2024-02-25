@@ -16,7 +16,7 @@ class Ball {
 public:
     Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWidth, int windowHeight);
 
-    bool Update(Paddle& paddle, std::vector<Brick>&);
+    bool Update(Paddle& paddle, std::vector<Brick>&, int&);
    
     void Render(SDL_Renderer* renderer);
 
