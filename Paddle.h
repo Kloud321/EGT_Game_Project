@@ -10,8 +10,7 @@ class Paddle {
 public:
 
     Paddle(int x, int y, int width, int height);
-    void MoveLeft();
-    void MoveRight();
+
     void Render(SDL_Renderer* renderer);
     SDL_Rect GetRect();
 

@@ -2,25 +2,15 @@
 
 Paddle::Paddle(int x, int y, int width, int height) : x(x), y(y), width(width), height(height) {}
 
-void Paddle::MoveLeft() {
-    x -= 10;
-}
-
-void Paddle::MoveRight() {
-    x += 10;
-}
-
 void Paddle::Render(SDL_Renderer* renderer) {
     SDL_Rect paddleRect = { x, y, width, height };
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer, &paddleRect);
-    //std::cout << "Rendering paddle\n";
 }
 
 SDL_Rect Paddle::GetRect() {
     return { x, y, width, height };
 }
-
 
 void Paddle::setWidth(int width) {
 
