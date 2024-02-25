@@ -31,5 +31,4 @@ private:
     int height;
     bool isGray;
     int durability;
-    int score;
 };
