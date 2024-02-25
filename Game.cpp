@@ -7,9 +7,7 @@ Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(
 
 ball(0, 0, 0, 0, 0, 0, 0), gameStarted(false), gameOver(false), gameWon(false), paused(false), fontSize(85), playerLives(2), fontManager(), fileHandler(), score(0) {}
 
-Game::~Game() {
-
-}
+Game::~Game() {}
 
 bool Game::Init(const char* title, int xpos, int ypos, int width, int height, int flags) {
     if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
@@ -26,7 +24,9 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
                 // Image init
-                IMG_Init(IMG_INIT_PNG);
+                if (IMG_Init(IMG_INIT_PNG) == -1) {
+                    std::cerr << "Failed to initialize SDL_image: " << IMG_GetError() << std::endl;
+                }
 
                 // Audio init
                 if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
@@ -141,9 +141,18 @@ void Game::HandleEvents() {
 
         case SDL_MOUSEMOTION:
             // if gameStarted we get the mouse X position and update paddle X 
-            if (!paused && gameStarted && ball.getBallState() ==true) {
+            if (!paused && gameStarted && ball.getBallState() == true) {
                 int mouseX = event.motion.x;
-                paddle.setX(mouseX - paddle.getWidth() / 2);
+                int paddleX = mouseX - paddle.getWidth() / 2;
+                if (paddleX < 0) {
+                    // Cannot move more than the left side of the screen
+                    paddleX = 0;
+                }
+                else if (paddleX + paddle.getWidth() > getWindowWidth()) {
+                    // Cannot move more than the right side of the screen
+                    paddleX = getWindowWidth() - paddle.getWidth();
+                }
+                paddle.setX(paddleX);
             }
             break;
 
