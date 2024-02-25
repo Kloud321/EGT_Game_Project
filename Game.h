@@ -2,6 +2,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
+#include "SDL_mixer.h"
 #include "Paddle.h"
 #include "Ball.h"
 #include "Bricks.h"
@@ -81,4 +82,7 @@ private:
     int windowHeight;
     int playerLives;
     int score;
+
+    Mix_Chunk* startSound;
+    Mix_Music* backgroundMusic;
 };

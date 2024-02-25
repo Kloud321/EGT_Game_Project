@@ -27,7 +27,32 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
 
                 // Image init
                 IMG_Init(IMG_INIT_PNG);
+
+                // Audio init
+                if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+                    std::cerr << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+                    return false;
+                }
+                // Load Sound effect
+                startSound = Mix_LoadWAV("Sounds/start.wav");
+                if (!startSound) {
+                    std::cerr << "Failed to load start sound effect! SDL_mixer Error: " << Mix_GetError() << std::endl;
+                    return false;
+                }
               
+                // Load Background music
+                backgroundMusic = Mix_LoadMUS("Sounds/background1.mp3");
+                if (!backgroundMusic) {
+                    std::cerr << "Failed to load background music! SDL_mixer Error: " << Mix_GetError() << std::endl;
+                    return false;
+                }
+
+                if (Mix_PlayMusic(backgroundMusic, -1) == -1) {
+                    std::cerr << "Failed to play background music! SDL_mixer Error: " << Mix_GetError() << std::endl;
+                    return false;
+                }
+                Mix_VolumeMusic(10);
+
                 // Load texture using TextureManager
                 if (!TextureManager::Instance()->loadTexture("images/b.bmp", "background", renderer)) {
                     std::cerr << "Failed to load texture!" << std::endl;
@@ -129,6 +154,8 @@ void Game::HandleEvents() {
                 if (IsMouseOverStartButton(mouseX, mouseY)) {
                     // Start the game
                     gameStarted = true;
+                    Mix_PlayChannel(-1, startSound, 0);
+                    Mix_VolumeMusic(10);
 
                 }
             }
@@ -320,12 +347,16 @@ void Game::Update() {
         else {
             cout << "Game over!" << endl;
             gameOver = true;
+            ball.setBallMoving(false);
             fileHandler.SaveScore(score);
+            Mix_PlayChannel(-1, startSound, 0);
         }
     }
     else if (isGameWon()) {
         gameWon = true;
+        ball.setBallMoving(false);
         fileHandler.SaveScore(score);
+        Mix_PlayChannel(-1, startSound, 0);
     }
 }
 
@@ -481,6 +512,10 @@ bool Game::IsRunning() {
 void Game::Clean() {
     cout << "cleaning game\n";
 
+    Mix_FreeChunk(startSound);
+    Mix_FreeMusic(backgroundMusic);
+    Mix_CloseAudio();
+
     TextureManager::Instance()->clean();
 
     SDL_DestroyWindow(window);
@@ -556,6 +591,12 @@ void Game::setScore(int newScore) {
 
 void Game::TogglePause() {
     paused = !paused;
+    if (paused) {
+        Mix_PauseMusic();
+    }
+    else {
+        Mix_ResumeMusic();
+    }
 }
 
 void Game::LoadScoresFromFile() {
