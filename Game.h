@@ -27,6 +27,7 @@ public:
     bool checkGameStarted() const;
     bool isGameWon();
 
+    void LoadScoresFromFile();
     void InitBricks();
     void InitPaddle();
     void InitBall();
@@ -37,6 +38,7 @@ public:
     void RenderGameOverScreen();
     void RenderGameWonScreen();
     void RenderTopScreenElements();
+
   
     int getWindowWidth() const;
     int getWindowHeight() const;

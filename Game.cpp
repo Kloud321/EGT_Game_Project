@@ -81,6 +81,9 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
 
                 // Init bricks
                 InitBricks();
+
+                // Load scores
+                LoadScoresFromFile();
                 
             }
             else {
@@ -553,6 +556,11 @@ void Game::setScore(int newScore) {
 
 void Game::TogglePause() {
     paused = !paused;
+}
+
+void Game::LoadScoresFromFile() {
+    std::vector<int> scores = fileHandler.LoadScores();
+
 }
 
 std::vector<Brick>Game::getBricks() const {
