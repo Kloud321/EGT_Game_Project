@@ -45,6 +45,7 @@ public:
     void setLives(int);
 
     int getScore() const;
+    void setScore(int);
 
     std::vector<Brick> getBricks() const;
 

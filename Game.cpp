@@ -5,7 +5,7 @@
 
 Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(0), paddle(0, 0, 0, 0),
 
-ball(0, 0, 0, 0, 0, 0, 0), gameStarted(false), gameOver(false), gameWon(false), fontSize(85), playerLives(2), fontManager(), score(0) {}
+ball(0, 0, 0, 0, 0, 0, 0), gameStarted(false), gameOver(false), gameWon(false), fontSize(85), playerLives(2), fontManager(), fileHandler(), score(0) {}
 
 Game::~Game() {
 
@@ -267,10 +267,6 @@ void Game::RenderTopScreenElements() {
     // Drawing text for remaining lives
     std::string livesText = "x" + std::to_string(getLives());
     SDL_Color textColor = { 255, 255, 255 }; // White color
-    int textWidth, textHeight;
-    textWidth = 0;
-    textHeight = 0;
-    fontManager.getTextSize(livesText.c_str(), textColor, &textWidth, &textHeight);
     SDL_Rect xNummberOfLivesRect = { getWindowWidth() - 160, 10, 0, 0 };
     fontManager.renderText(livesText.c_str(), textColor, renderer, xNummberOfLivesRect.x, xNummberOfLivesRect.y);
 
@@ -302,7 +298,7 @@ bool Game::IsMouseOverStartButton(int mouseX, int mouseY) {
 
 void Game::Update() {
 
-    if (!ball.Update(paddle, bricks)) {
+    if (!ball.Update(paddle, bricks, score)) {
 
         setLives(getLives() - 1);
         cout << "Lives Left" << getLives() << endl;
@@ -313,10 +309,12 @@ void Game::Update() {
         else {
             cout << "Game over!" << endl;
             gameOver = true;
+            fileHandler.SaveScore(score);
         }
     }
     else if (isGameWon()) {
         gameWon = true;
+        fileHandler.SaveScore(score);
     }
 }
 
@@ -524,10 +522,6 @@ bool Game::checkGameStarted() const {
     return this->gameStarted;
 }
 
-int Game::getScore() const {
-    return this->score;
-}
-
 bool Game::isGameWon(){
     for (auto& brick : bricks) {
         if (!brick.IsBroken()) {
@@ -537,6 +531,15 @@ bool Game::isGameWon(){
     return true;
 }
 
+int Game::getScore() const{
+    
+    return this->score;
+}
+
+void Game::setScore(int newScore) {
+
+    this->score = newScore;
+}
 
 std::vector<Brick>Game::getBricks() const {
     return this->bricks;
