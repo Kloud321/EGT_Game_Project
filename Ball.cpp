@@ -6,6 +6,7 @@ Ball::Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWid
     windowHeight(windowHeight), initialX(x), initialY(y), isBallMoving(false){}
 
 bool Ball::Update(Paddle& paddle, std::vector<Brick>& bricks, int& score) {
+
     if (isBallMoving) {
         // Update ball position
         x += velocityX;
@@ -21,8 +22,30 @@ bool Ball::Update(Paddle& paddle, std::vector<Brick>& bricks, int& score) {
                 //right sBall  right sPaddle    left sBall          right sPaddle                 bottom ball   top paddle      top ball            bottom paddle
         else if (x + radius >= paddle.getX() && x - radius <= paddle.getX() + paddle.getWidth() && y + radius > paddle.getY() && y - radius < paddle.getY() + paddle.getHeight()) {
             // Change ball direction
-            velocityY = -velocityY; // Reverse vertical velocity for paddle
+            velocityY = -velocityY;
         }
+        
+        //else if (x + radius >= paddle.getX() && x - radius <= paddle.getX() + paddle.getWidth() && y + radius > paddle.getY() && y - radius < paddle.getY() + paddle.getHeight()) {
+        //    // Calculate the distance between the center of the ball and the center of the paddle
+        //    const double speed = 6.0;
+        //    int paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
+        //    int ballDistanceFromPaddleCenter = x - paddleCenterX;
+
+        //    // Normalize the distance to a range between -1 and 1
+        //    double normalizedDistance = (double)ballDistanceFromPaddleCenter / (paddle.getWidth() / 2);
+
+        //    // Calculate the angle of reflection based on the normalized distance
+        //    double maxBounceAngle = 45; // Maximum angle of reflection in degrees
+        //    double bounceAngle = normalizedDistance * maxBounceAngle;
+
+        //    // Convert the angle to radians
+        //    double bounceAngleRadians = bounceAngle * M_PI / 180.0;
+        //   
+        //    // Calculate new velocities using trigonometry
+        //    velocityX = speed * cos(bounceAngleRadians);
+        //    velocityY = -speed * sin(bounceAngleRadians);
+        //}
+
  
         // Check for collision with bricks
         for (auto it = bricks.begin(); it != bricks.end();) {
