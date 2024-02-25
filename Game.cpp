@@ -35,7 +35,17 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
                 }
 
                 if (!TextureManager::Instance()->loadTexture("images/black-brick.bmp", "game", renderer)) {
-                    std::cerr << "Failed to load texture!" << std::endl;
+                    std::cerr << "Failed to load background texture!" << std::endl;
+                    return false;
+                }
+
+                if (!TextureManager::Instance()->loadTexture("images/heart.png", "heart", renderer)) {
+                    std::cerr << "Failed to load heart texture!" << std::endl;
+                    return false;
+                }
+
+                if (!TextureManager::Instance()->loadTexture("images/pause.png", "pause", renderer)) {
+                    std::cerr << "Failed to load pause texture!" << std::endl;
                     return false;
                 }
 
@@ -161,6 +171,7 @@ void Game::HandleEvents() {
 }
 
 void Game::RenderStartScreen() {
+
     // Clear screen
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -246,6 +257,42 @@ void Game::RenderGameWonScreen() {
     // Present renderer
     SDL_RenderPresent(renderer);
 
+}
+
+void Game::RenderTopScreenElements() {
+    
+    // Drawing heart with transparency
+    TextureManager::Instance()->drawTexture("heart", 1050, 10, 69, 69, renderer);
+
+    // Drawing text for remaining lives
+    std::string livesText = "x" + std::to_string(getLives());
+    SDL_Color textColor = { 255, 255, 255 }; // White color
+    int textWidth, textHeight;
+    textWidth = 0;
+    textHeight = 0;
+    fontManager.getTextSize(livesText.c_str(), textColor, &textWidth, &textHeight);
+    SDL_Rect xNummberOfLivesRect = { getWindowWidth() - 160, 10, 0, 0 };
+    fontManager.renderText(livesText.c_str(), textColor, renderer, xNummberOfLivesRect.x, xNummberOfLivesRect.y);
+
+    // Score
+    SDL_Rect scoreRect = { (getWindowWidth() - 100) / 2 + 15, 10, 30, 15 };
+    std::string scoreText = std::to_string(getScore());
+    fontManager.renderText(scoreText.c_str(), textColor, renderer, scoreRect.x, scoreRect.y);
+
+    // Draw pause button with transparency
+    // Set color
+    SDL_Color pauseButtonColor = { 128, 128, 128, 255 };
+    SDL_Color outlineColor = { 255, 255, 255, 255 };
+    // Outline rect
+    SDL_Rect pauseButtonOutlineRect = { 20 - 2, 10 - 2, 60 + 4, 60 + 4 };
+    SDL_SetRenderDrawColor(renderer, outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a);
+    SDL_RenderFillRect(renderer, &pauseButtonOutlineRect);
+
+    // Button rect
+    SDL_Rect pauseButtonRect = { 20, 10, 60, 60 };
+    SDL_SetRenderDrawColor(renderer, pauseButtonColor.r, pauseButtonColor.g, pauseButtonColor.b, pauseButtonColor.a);
+    SDL_RenderFillRect(renderer, &pauseButtonRect);
+    TextureManager::Instance()->drawTexture("pause", pauseButtonRect.x, pauseButtonRect.y, pauseButtonRect.w, pauseButtonRect.h, renderer);
 }
 
 bool Game::IsMouseOverStartButton(int mouseX, int mouseY) {
@@ -409,6 +456,8 @@ void Game::Render() {
 
         paddle.Render(renderer);
         ball.Render(renderer);
+        RenderTopScreenElements();
+
         for (auto& brick : bricks) {
                brick.Render(renderer);
            }

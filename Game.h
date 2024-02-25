@@ -25,19 +25,18 @@ public:
     bool IsMouseOverStartButton(int, int);
 
     bool checkGameStarted() const;
+    bool isGameWon();
 
     void InitBricks();
     void InitPaddle();
     void InitBall();
-
     void ResetPaddleAndBall();
-
-    void CheckBrickCollision();
 
     void RunGameLoop();
     void RenderStartScreen();
     void RenderGameOverScreen();
     void RenderGameWonScreen();
+    void RenderTopScreenElements();
   
     int getWindowWidth() const;
     int getWindowHeight() const;
@@ -49,13 +48,14 @@ public:
 
     std::vector<Brick> getBricks() const;
 
-    //bool isGameWon(std::vector<Brick>&);
-    bool isGameWon();
-  
 private:
     SDL_Rect startButtonRect;
     SDL_Rect gameOverRect;
     SDL_Rect gameWonRect;
+    SDL_Rect scoreRect;
+    SDL_Rect pauseButtonRect;
+    SDL_Rect xNummberOfLivesRect;
+
     bool gameStarted; 
     bool gameOver;
     bool gameWon;
