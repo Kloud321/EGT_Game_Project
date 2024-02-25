@@ -1,39 +1,53 @@
+#pragma once
 #include <SDL.h>
 #include <iostream>
 #include <string>
+#include "Paddle.h"
+#include "Bricks.h"
+#include <vector>
 
 using std::cout;
 using std::endl;
 
+//forward declaration
+class Game;
+
 class Ball {
 public:
     Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWidth, int windowHeight);
-    void Update();
+
+    bool Update(Paddle& paddle, std::vector<Brick>&, int&);
+   
     void Render(SDL_Renderer* renderer);
+
     SDL_Rect GetRect();
-    void ChangeDirectionX();
-    void ChangeDirectionY();
 
     void setWidth(int);
-    int getWidth();
+    int getWidth() const;
 
     void setHeight(int);
-    int getHeight();
+    int getHeight() const;
 
     void setX(int);
-    int getX();
+    int getX() const;
 
     void setY(int);
-    int getY();
+    int getY() const;
 
     void setRadius(int);
-    int getRadius();
+    int getRadius() const;
 
     void setVelocityX(int);
-    int getVelocityX();
+    int getVelocityX() const;
 
     void setVelocityY(int);
-    int getVelocityY();
+    int getVelocityY() const;
+
+    void setBallMoving(bool);
+    bool getBallState() const;
+
+    int getInitialX() const;
+    int getInitialY() const;
 
 private:
     int x;
@@ -42,6 +56,8 @@ private:
     int velocityX;
     int velocityY;
     int windowWidth;
-    int windowHeight;
-
+    int windowHeight; 
+    int initialX;
+    int initialY;
+    bool isBallMoving;
 };

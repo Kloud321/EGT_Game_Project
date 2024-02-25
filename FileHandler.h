@@ -1,6 +1,8 @@
 #pragma once
+#include <vector>
+
 class FileHandler {
 public:
     void SaveScore(int score);
-    int LoadScore();
+    std::vector<int> LoadScores();
 };

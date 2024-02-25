@@ -1,23 +1,82 @@
 #include "Ball.h"
+#include "Game.h"
 
 Ball::Ball(int x, int y, int radius, int velocityX, int velocityY, int windowWidth, int windowHeight)
-    : x(x), y(y), radius(radius), velocityX(velocityX), velocityY(velocityY), windowWidth(windowWidth), windowHeight(windowHeight) {}
+    : x(x), y(y), radius(radius), velocityX(velocityX), velocityY(velocityY), windowWidth(windowWidth),
+    windowHeight(windowHeight), initialX(x), initialY(y), isBallMoving(false){}
 
-void Ball::Update() {
+bool Ball::Update(Paddle& paddle, std::vector<Brick>& bricks, int& score) {
 
-    //ball position
-    x += velocityX;
-    y += velocityY;
+    if (isBallMoving) {
+        // Update ball position
+        x += velocityX;
+        y += velocityY;
 
+        // Check for collisions with window boundaries and paddle
+        if (x - radius <= 0 || x + radius >= windowWidth) {
+            velocityX = -velocityX; // Reverse horizontal velocity
+        }
+        if (y - radius < 0) {
+            velocityY = -velocityY; // Reverse vertical velocity for top boundary
+        }
+                //right sBall  right sPaddle    left sBall          right sPaddle                 bottom ball   top paddle      top ball            bottom paddle
+        else if (x + radius >= paddle.getX() && x - radius <= paddle.getX() + paddle.getWidth() && y + radius > paddle.getY() && y - radius < paddle.getY() + paddle.getHeight()) {
+            // Change ball direction
+            velocityY = -velocityY;
+        }
+        
+        //else if (x + radius >= paddle.getX() && x - radius <= paddle.getX() + paddle.getWidth() && y + radius > paddle.getY() && y - radius < paddle.getY() + paddle.getHeight()) {
+        //    // Calculate the distance between the center of the ball and the center of the paddle
+        //    const double speed = 6.0;
+        //    int paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
+        //    int ballDistanceFromPaddleCenter = x - paddleCenterX;
 
-    
- if (x - radius < 0 || x + radius > windowWidth) {
-     velocityX = -velocityX; // Reverse horizontal velocity
- }
- if (y - radius < 0 || y + radius > windowHeight) {
-    velocityY = -velocityY; // Reverse vertical velocity
+        //    // Normalize the distance to a range between -1 and 1
+        //    double normalizedDistance = (double)ballDistanceFromPaddleCenter / (paddle.getWidth() / 2);
+
+        //    // Calculate the angle of reflection based on the normalized distance
+        //    double maxBounceAngle = 45; // Maximum angle of reflection in degrees
+        //    double bounceAngle = normalizedDistance * maxBounceAngle;
+
+        //    // Convert the angle to radians
+        //    double bounceAngleRadians = bounceAngle * M_PI / 180.0;
+        //   
+        //    // Calculate new velocities using trigonometry
+        //    velocityX = speed * cos(bounceAngleRadians);
+        //    velocityY = -speed * sin(bounceAngleRadians);
+        //}
+
+ 
+        // Check for collision with bricks
+        for (auto it = bricks.begin(); it != bricks.end();) {
+            Brick& brick = *it;
+
+            if (x + radius > brick.getX() && x - radius < brick.getX() + brick.getWidth() &&
+                y + radius > brick.getY() && y - radius < brick.getY() + brick.getHeight()) {
+                // Collision with brick
+                velocityY = -velocityY; // Reverse
+                brick.Hit();
+                score += 1;
+                
+                if (brick.getDurability() == 1 && brick.getIsGray()) {
+                    brick.setIsGray(false);
+                }
+            
+            }
+            if (brick.IsBroken()) {
+                it = bricks.erase(it);
+            }
+            else {
+                ++it;
+            }
     }
-
+            // Check for collision with bottom
+            if (y + radius > windowHeight) {
+                setBallMoving(false);
+                return false;
+            }
+    }
+    return true;
 }
 
 void Ball::Render(SDL_Renderer* renderer) {
@@ -25,60 +84,66 @@ void Ball::Render(SDL_Renderer* renderer) {
     SDL_Rect rect = GetRect();
     SDL_RenderDrawRect(renderer, &rect);
     SDL_RenderFillRect(renderer, &rect);
-    //std::cout << "Rendering ball\n";
 }
 
 SDL_Rect Ball::GetRect(){
     return { x - radius, y - radius, radius * 2, radius * 2 };
 }
 
-void Ball::ChangeDirectionX() {
-    velocityX = -velocityX;
-}
-
-void Ball::ChangeDirectionY() {
-    velocityY = -velocityY;
-}
-
-
 void Ball::setX(int x) {
 
-    x = this->x;
+    this->x = x;
 }
 
 void Ball::setY(int y) {
 
-    y = this->y;
-}
-
-int Ball::getX() {
-    return x;
-}
-
-int Ball::getY() {
-    return y;
-}
-
-int Ball::getRadius() {
-    return radius;
+    this->y = y;
 }
 
 void Ball::setRadius(int radius) {
     this->radius = radius;
 }
 
-int Ball::getVelocityX() {
-    return this->velocityX;
-}
-
 void Ball::setVelocityX(int velocityX) {
     this->velocityX = velocityX;
 }
 
-int Ball::getVelocityY() {
+void Ball::setVelocityY(int velocityY) {
+    this->velocityY = velocityY;
+}
+
+void Ball::setBallMoving(bool state) {
+    this->isBallMoving = state;
+}
+
+int Ball::getX() const {
+    return x;
+}
+
+int Ball::getY() const {
+    return y;
+}
+
+int Ball::getRadius() const {
+    return radius;
+}
+
+int Ball::getVelocityX() const{
+    return this->velocityX;
+}
+
+int Ball::getVelocityY() const {
     return this->velocityY;
 }
 
-void Ball::setVelocityY(int velocityY) {
-    this->velocityY = velocityY;
+bool Ball::getBallState() const {
+    return this->isBallMoving;
+}
+
+int Ball::getInitialX() const {
+    return initialX;
+}
+
+int Ball::getInitialY() const {
+    return initialY;
 }
