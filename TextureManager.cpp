@@ -25,6 +25,14 @@ void TextureManager::drawTexture(std::string id, int x, int y,
 	int width, int height,
 	SDL_Renderer* ren, SDL_RendererFlip flip) {
 
+
+	if (textureMap.find(id) == textureMap.end()) {
+		std::cerr << "Texture with id: '" << id << "' is not found." << std::endl;
+		return;
+
+	}
+	SDL_SetTextureBlendMode(textureMap[id], SDL_BLENDMODE_BLEND);
+
 	SDL_Rect srcRect;
 	SDL_Rect destRect;
 	srcRect.x = srcRect.y = 0;
