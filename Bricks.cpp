@@ -1,6 +1,6 @@
 #include "Bricks.h"
 
-Brick::Brick(int x, int y, int width, int height, bool isGray) : x(x), y(y), width(width), height(height), isGray(isGray), durability(isGray ? 2 : 1) {}
+Brick::Brick(int x, int y, int width, int height, bool isGray) : x(x), y(y), width(width), height(height), isGray(isGray), durability(isGray ? 2 : 1), score(0){}
 
 void Brick::Render(SDL_Renderer* renderer) {
     SDL_Rect brickRect = { x, y, width, height };
