@@ -20,41 +20,84 @@ bool Ball::Update(Paddle& paddle, std::vector<Brick>& bricks, int& score) {
             velocityY = -velocityY; // Reverse vertical velocity for top boundary
         }
                 //right sBall  right sPaddle    left sBall          right sPaddle                 bottom ball   top paddle      top ball            bottom paddle
-        else if (x + radius >= paddle.getX() && x - radius <= paddle.getX() + paddle.getWidth() && y + radius > paddle.getY() && y - radius < paddle.getY() + paddle.getHeight()) {
-            // Change ball direction
-            velocityY = -velocityY;
-        }
-        
         //else if (x + radius >= paddle.getX() && x - radius <= paddle.getX() + paddle.getWidth() && y + radius > paddle.getY() && y - radius < paddle.getY() + paddle.getHeight()) {
-        //    // Calculate the distance between the center of the ball and the center of the paddle
-        //    const double speed = 6.0;
-        //    int paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
-        //    int ballDistanceFromPaddleCenter = x - paddleCenterX;
-
-        //    // Normalize the distance to a range between -1 and 1
-        //    double normalizedDistance = (double)ballDistanceFromPaddleCenter / (paddle.getWidth() / 2);
-
-        //    // Calculate the angle of reflection based on the normalized distance
-        //    double maxBounceAngle = 45; // Maximum angle of reflection in degrees
-        //    double bounceAngle = normalizedDistance * maxBounceAngle;
-
-        //    // Convert the angle to radians
-        //    double bounceAngleRadians = bounceAngle * M_PI / 180.0;
-        //   
-        //    // Calculate new velocities using trigonometry
-        //    velocityX = speed * cos(bounceAngleRadians);
-        //    velocityY = -speed * sin(bounceAngleRadians);
+        //    // Change ball direction
+        //    velocityY = -velocityY;
         //}
+        
+        else if (x + radius >= paddle.getX() && x - radius <= paddle.getX() + paddle.getWidth() && y + radius > paddle.getY() && y - radius < paddle.getY() + paddle.getHeight()) {
+            // Check if the collision is with the top side of the paddle
+            if (y - radius < paddle.getY()) {
+                // Reverse the vertical velocity for a bounce upwards
+                velocityY = -velocityY;
 
- 
+                y = paddle.getY() - radius;
+            }
+            else {
+                // Calculate the distance between the center of the ball and the center of the paddle
+                int paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
+                int ballDistanceFromPaddleCenter = x - paddleCenterX;
+                int speed = 6;
+
+                // Calculate the normalized distance to determine the direction of the bounce
+                double normalizedDistance = static_cast<double>(ballDistanceFromPaddleCenter) / (paddle.getWidth() / 2);
+
+                // Determine bounce direction based on the normalized distance
+                if (normalizedDistance < 0) {
+                    // Left side collision: bounce towards the left
+                    velocityX = -speed; // Set horizontal velocity to the left
+                }
+                else {
+                    // Right side collision: bounce towards the right
+                    velocityX = speed; // Set horizontal velocity to the right
+                }
+
+                // Reverse vertical velocity for other collisions
+                velocityY = -speed; // Reverse vertical velocity
+            }
+        }
+
+
         // Check for collision with bricks
         for (auto it = bricks.begin(); it != bricks.end();) {
             Brick& brick = *it;
 
+            //if (x + radius > brick.getX() && x - radius < brick.getX() + brick.getWidth() &&
+            //    y + radius > brick.getY() && y - radius < brick.getY() + brick.getHeight()) {
+            //    // Collision with brick
+                //velocityY = -velocityY; // Reverse
+
             if (x + radius > brick.getX() && x - radius < brick.getX() + brick.getWidth() &&
                 y + radius > brick.getY() && y - radius < brick.getY() + brick.getHeight()) {
-                // Collision with brick
-                velocityY = -velocityY; // Reverse
+                // Check if the collision is with the top side of the brick
+                if (y - radius < brick.getY()) {
+                    // Reverse the vertical velocity for a bounce upwards
+                    velocityY = -velocityY;
+                    // Adjust the ball's position to be just above the brick
+                    y = brick.getY() - radius;
+                }
+                else if (y + radius > brick.getY() + brick.getHeight()) {
+                    // Reverse the vertical velocity for a bounce downwards
+                    velocityY = -velocityY;
+                    // Adjust the ball's position to be just below the brick
+                    y = brick.getY() + brick.getHeight() + radius;
+                }
+
+                // Check if the collision is with the left side of the brick
+                if (x - radius < brick.getX() && x > brick.getX()) {
+                    // Reverse the horizontal velocity for a bounce to the left
+                    velocityX = -velocityX;
+                    // Adjust the ball's position to be just left of the brick
+                    x = brick.getX() - radius;
+                }
+
+                // Check if the collision is with the right side of the brick
+                if (x - radius < brick.getX() + brick.getWidth() && x > brick.getX() + brick.getWidth()) {
+                    // Reverse the horizontal velocity for a bounce to the right
+                    velocityX = -velocityX;
+                    // Adjust the ball's position to be just right of the brick
+                    x = brick.getX() + brick.getWidth() + radius;
+                }
                 brick.Hit();
                 score += 1;
                 

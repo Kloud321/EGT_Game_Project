@@ -3,11 +3,8 @@
 
 #include <iostream>
 
-Game::Game() : window(nullptr), renderer(nullptr), running(false), currentFrame(0), paddle(0, 0, 0, 0),
-
-ball(0, 0, 0, 0, 0, 0, 0), gameStarted(false), gameOver(false), gameWon(false), paused(false), fontSize(85), playerLives(2), fontManager(), fileHandler(), score(0) {}
-
-Game::~Game() {}
+Game::Game() : window(nullptr), renderer(nullptr), running(false), paddle(0, 0, 0, 0),ball(0, 0, 0, 0, 0, 0, 0),gameStarted(false),
+gameOver(false), gameWon(false), paused(false), fontSize(85), playerLives(2), fontManager(), fileHandler(), score(0) {}
 
 bool Game::Init(const char* title, int xpos, int ypos, int width, int height, int flags) {
     if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
@@ -175,12 +172,10 @@ void Game::HandleEvents() {
                     if (!ball.getBallState()) {
                         // Toggle ball movement
                         ball.setBallMoving(true);
-                        cout << "Ball is moving" << endl;
                     }
                 }
             }
             break;
-
 
         case SDL_KEYDOWN:
             if (event.key.keysym.sym == SDLK_SPACE) {
@@ -189,30 +184,6 @@ void Game::HandleEvents() {
             }
             break;
 
-        case SDL_WINDOWEVENT:
-            if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-
-                // Update window dimensions
-                windowWidth = event.window.data1;
-                windowHeight = event.window.data2;
-        
-                // Recalculate paddle position to remain at the bottom
-                int paddleWidth = paddle.getWidth();
-                int paddleHeight = paddle.getHeight();
-                int paddleX = (windowWidth - paddleWidth) / 2; // Center horizontally
-                int paddleY = windowHeight - paddleHeight; // Bottom of the screen
-                paddle.setX(paddleX);
-                paddle.setY(paddleY);
-
-                // Update ball position to remain on the paddle
-                int ballRadius = ball.getRadius();
-                int ballX = paddleX + paddleWidth / 2; // Center of the paddle horizontally
-                int ballY = paddleY - ballRadius; // On top of the paddle
-                ball.setX(ballX);
-                ball.setY(ballY);
-            }
-            break;
-           
         }
     }
 }
@@ -346,9 +317,8 @@ bool Game::IsMouseOverStartButton(int mouseX, int mouseY) {
 void Game::Update() {
 
     if (!ball.Update(paddle, bricks, score)) {
-
+        //
         setLives(getLives() - 1);
-        cout << "Lives Left" << getLives() << endl;
         if (getLives() > 0) {
 
             ResetPaddleAndBall();
@@ -419,7 +389,9 @@ void Game::InitBricks() {
 
     for (int row = 0; row < 5; ++row) {
         for (int col = 0; col < 3; ++col) {
+            //Horizontaly next to each other
             int x = leftCubeStartX + col * (brickWidth + spacing);
+            //Verticaly next to each other
             int y = leftCubeStartY + row * (brickHeight + spacing);
             bricks.push_back(Brick(x, y, brickWidth, brickHeight, false));
         }
@@ -430,7 +402,9 @@ void Game::InitBricks() {
     int rightCubeStartY = (WINDOW_HEIGHT - (12 * (brickHeight + spacing))) / 2;
     for (int row = 0; row < 5; ++row) {
         for (int col = 0; col < 3; ++col) {
+            //Horizontaly next to each other
             int x = rightCubeStartX + col * (brickWidth + spacing);
+            // Verticaly next to each other
             int y = rightCubeStartY + row * (brickHeight + spacing);
             bricks.push_back(Brick(x, y, brickWidth, brickHeight, false));
         }
@@ -446,7 +420,9 @@ void Game::InitBricks() {
 
     for (int row = 0; row < 5; ++row) {
         for (int col = 0; col < 3; ++col) {
+            //Horizontaly next to each other
             int x = middleCubeStartX + col * (brickWidth + spacing);
+            // Verticaly next to each other
             int y = middleCubeStartY + row * (brickHeight + spacing);
             bricks.push_back(Brick(x, y, brickWidth, brickHeight, false));
         }
@@ -457,7 +433,9 @@ void Game::InitBricks() {
     int startY = middleCubeStartY + middleCubeHeight + brickHeight + 2*spacing; // 1 brick space below the middle cube
     for (int row = 0; row < 2; ++row) {
         for (int col = 0; col < 7; ++col) {
+            //Horizontaly next to each other
             int x = startX + col * (brickWidth + spacing);
+            // Verticaly next to each other
             int y = startY + row * (brickHeight + spacing);
             bricks.push_back(Brick(x, y, brickWidth, brickHeight, true)); // Using gray bricks
         }
@@ -468,7 +446,9 @@ void Game::InitBricks() {
     int startLeftColY = (WINDOW_HEIGHT - (12 * (brickHeight + spacing))) / 2;
     for (int row = 0; row < 6; ++row) {
         for (int col = 0; col < 1; ++col) {
+            //Horizontaly next to each other
             int x = startLeftColX + col * (brickWidth + spacing);
+            // Verticaly next to each other
             int y = startLeftColY + row * (brickHeight + spacing);
             bricks.push_back(Brick(x, y, brickWidth, brickHeight, true)); // Using gray bricks
         }
@@ -479,7 +459,9 @@ void Game::InitBricks() {
     int startRightColY = (WINDOW_HEIGHT - (12 * (brickHeight + spacing))) / 2;
     for (int row = 0; row < 6; ++row) {
         for (int col = 0; col < 1; ++col) {
+            //Horizontaly next to each other
             int x = startRightColX + col * (brickWidth + spacing);
+            // Verticaly next to each other
             int y = startRightColY + row * (brickHeight + spacing);
             bricks.push_back(Brick(x, y, brickWidth, brickHeight, true)); // Using gray bricks
         }
@@ -533,22 +515,25 @@ void Game::Clean() {
 }
 
 void Game::RunGameLoop() {
+    // store the start time of the current frame
     Uint32 frameStart;
+    // store the time taken to complete the frame
     int frameTime;
     const int desiredFrameRate = 50;
-
+    //continues as long as the game is running
     while (IsRunning()) {
-        frameStart = SDL_GetTicks();
+        frameStart = SDL_GetTicks();  // get the current time in milliseconds at the start of the frame
 
         HandleEvents();
         if (!paused) {
             Update();
         }
-        Render();
+        Render(); //Render the current frame
 
-        frameTime = SDL_GetTicks() - frameStart;
+        frameTime = SDL_GetTicks() - frameStart; // calculate the time taken to complete the frame
 
-        if (frameTime < 1000 / desiredFrameRate) {
+        // delay to achieve the desired frame rate
+        if (frameTime < 1000 / desiredFrameRate) { // if the frame was rendered faster than desired frame rate
             SDL_Delay(1000 / desiredFrameRate - frameTime);
         }
     }
